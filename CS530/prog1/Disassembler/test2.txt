@@ -1,2 +1,0 @@
-INSTR          FORMAT             OAM            TAAM             OBJ
-ADDR               2                                            9041
