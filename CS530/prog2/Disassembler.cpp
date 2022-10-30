@@ -1,4 +1,4 @@
-#include "disassembler.h"
+#include "Disassembler.h"
 
 const string Disassembler::ops[] = {
     "18","58","90","40","B4","28",
