@@ -162,7 +162,6 @@ void Disassembler::GrabSYM() {
 
     cout << "\nGrabbing Symbol Information\n" << endl;
 
-    int row = 0;
     symTableSize = 0;
     for (int i = 0; i < inputSizeSYM; i++) {
 
@@ -172,10 +171,9 @@ void Disassembler::GrabSYM() {
             string sym, addr, flag;
             while (ss >> sym >> addr >> flag) {
 
-                symTable[row][0] = sym;
-                symTable[row][1] = addr;
+                symTable[symTableSize][0] = sym;
+                symTable[symTableSize][1] = addr;
                 symTableSize++;
-                row++;
 
             }
         }
