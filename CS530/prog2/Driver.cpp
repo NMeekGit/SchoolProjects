@@ -4,7 +4,7 @@ int main(int argc, char** argv) {
 
     Disassembler g;
 
-    for (int i = 1; i < argc; i + 2) {
+    for (int i = 1; i < argc; i = i + 2) {
 
         string fileOBJ = argv[i];
         string fileSYM = argv[i+1];
