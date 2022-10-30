@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
         cout << "Files Entered:" << setw(12) << fileOBJ << setw(12) << fileSYM << endl;
 
         cout << "Attempt Open" << endl;
-        g.OpenFile(i, fileOBJ);
+        g.OpenFile(i, fileOBJ, fileSYM);
 
         cout << "Attempt Print" << endl;
         g.PrintFile();
