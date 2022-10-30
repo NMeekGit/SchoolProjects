@@ -4,16 +4,16 @@
 
 CC = g++
 CFLAGS = -Wall -std=c++11 -g3 -c
-OBJS = disassembler.o driver.o
+OBJS = Disassembler.o Driver.o
 
 disassem: $(OBJS)
 	$(CC) -o disassem $^
 
-driver.o: driver.cpp
-	$(CC) $(CFLAGS) driver.cpp
+driver.o: Driver.cpp
+	$(CC) $(CFLAGS) Driver.cpp
 
-disassembler.o: disassembler.cpp disassembler.h
-	$(CC) $(CFLAGS) disassembler.cpp
+disassembler.o: Disassembler.cpp Disassembler.h
+	$(CC) $(CFLAGS) Disassembler.cpp
 
 clean:
 	rm -f *.o disassem *.txt 
