@@ -35,18 +35,26 @@ int Disassembler::MAX_SIZE = 100;
 
 Disassembler::Disassembler() {
 
+    txtRecord = new string[MAX_SIZE];
+    symTable = new string*[MAX_SIZE];
+    
+    for (int i = 0; i < MAX_SIZE; i++) {
+        symTable[i] = new string[2];
+    }
+
 };
 
 Disassembler::~Disassembler() {
-    delete[] input;
+    delete[] inputOBJ;
+    delete[] inputSYM;
     delete[] output;
 };
 
-void Disassembler::OpenFile(int index, string file){
+void Disassembler::OpenFile(int index, string file, string symbol){
 
     string line;
-    input = new string[MAX_SIZE];
-    inputSize = 0;
+    inputOBJ = new string[MAX_SIZE];
+    inputSizeOBJ = 0;
 
     ifstream fileOBJ(file);
 
@@ -57,8 +65,8 @@ void Disassembler::OpenFile(int index, string file){
         int i = 0;
         while (getline(fileOBJ,line)) {
 
-            input[i] = line;
-            inputSize++;
+            inputOBJ[i] = line;
+            inputSizeOBJ++;
             i++;
 
         }
@@ -67,14 +75,41 @@ void Disassembler::OpenFile(int index, string file){
 
     }
 
-    // Check current Input[]
-    cout << "Current Input:\n" << endl;
-    for (int i = 0; i <= inputSize; i++) {
-        cout << input[i] << endl;
-    }
-    cout << "\nSize: " << inputSize << "\n" << endl;
+    inputSYM = new string[MAX_SIZE];
+    inputSizeSYM = 0;
 
-    // grabTXT();
+    ifstream fileSYM(symbol);
+
+    if (fileSYM.is_open()) {
+
+        cout << symbol << " is open" << endl;
+
+        int i = 0;
+        while (getline(fileSYM,line)) {
+
+            inputSYM[i] = line;
+            inputSizeSYM++;
+            i++;
+
+        }
+    }
+
+    // Check current Input[]
+    cout << "Current InputOBJ:\n" << endl;
+    for (int i = 0; i <= inputSizeOBJ; i++) {
+        cout << inputOBJ[i] << endl;
+    }
+    cout << "\nSize: " << inputSizeOBJ << "\n" << endl;
+
+    // Check current symbol table input
+    cout << "Current Symbol Table:\n" << endl;
+    for (int i = 0; i < inputSizeSYM; i++) {
+        cout << inputSYM[i] << endl;
+    }
+    cout << "\nSize: " << inputSizeSYM << "\n" << endl;
+
+    GrabTXT();
+    GrabSYM();
 };
 
 void Disassembler::PrintFile() {
@@ -92,3 +127,49 @@ void Disassembler::PrintFile() {
     cout << "File Printed" << endl;
 
 };
+
+void Disassembler::GrabTXT() {
+
+    cout << "Grabbing Text Record" << endl;
+
+    for (int i = 0; i <= inputSizeOBJ; i++) {
+
+        if (inputOBJ[i][0] == 'T') {
+
+            txtRecord[i] = inputOBJ[i];
+
+            cout << "Text Record Recieved: " << setw(12) << txtRecord[i] << endl;
+        }
+    }
+};
+
+void Disassembler::GrabSYM() {
+
+    cout << "Grabbing Symbol Information" << endl;
+
+    int row = 0;
+    symTableSize = 0;
+    for (int i = 0; i < inputSizeSYM; i++) {
+
+        if (inputSYM[i][0] != 'S' && inputSYM[i][0] != '-') {
+
+            istringstream ss(inputSYM[i]);
+            string sym, addr, flag;
+            while (ss >> sym >> addr >> flag) {
+
+                symTable[row][0] = sym;
+                symTable[row][1] = addr;
+                symTableSize++;
+                row++;
+
+            }
+        }
+    }
+
+    cout << "Current Symbol Table:" << endl;
+    for (int i = 0; i < symTableSize; ++i) {
+        cout << symTable[i][0] << setw(8) << symTable[i][1] << endl;
+    }
+    cout << "Symbol Table Size: " << symTableSize << endl;
+};
+

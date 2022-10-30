@@ -15,6 +15,7 @@
 #include <string>
 #include <array>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <fstream>
 #include <cmath>
@@ -37,13 +38,16 @@ class Disassembler {
     bool pc;
     bool base;
 
-    int inputSize;
+    int inputSizeOBJ;
+    int inputSizeSYM;
+    int symTableSize;
     int txtSize;
     int rowSize;
 
-    string txtRecord;
-
-    string* input;
+    string* txtRecord;
+    string* inputOBJ;
+    string* inputSYM;
+    string** symTable;
     string** output;
 
     ifstream fileOBJ;
@@ -56,10 +60,11 @@ class Disassembler {
         Disassembler();                     // Constructor
         ~Disassembler();                    // Deconstructor
 
-        void OpenFile(int, string);         // Read in File
+        void OpenFile(int, string, string);         // Read in File
         void PrintFile();                   // Output new file
 
-        void GrabTXT();                     //Grab TXT Record from input
+        void GrabTXT();                     // Grab TXT Record from input
+        void GrabSYM();                     // Grab SYM Table from input
         void GrabTXTInfo();                 // Grab TEXT Record Info
         
         void Solve();                       // Begin parsing
