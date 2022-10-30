@@ -3,8 +3,8 @@
 # Class: CS530
 
 CC = g++
-CFLAGS = -WALL -std=c++11 -g3 -c
-OBJS = disassember.o driver.o
+CFLAGS = -Wall -std=c++11 -g3 -c
+OBJS = disassembler.o driver.o
 
 disassem: $(OBJS)
 	$(CC) -o disassem $^
@@ -12,8 +12,8 @@ disassem: $(OBJS)
 driver.o: driver.cpp
 	$(CC) $(CFLAGS) driver.cpp
 
-disassember.o: disassembler.cpp disassembler.h
+disassembler.o: disassembler.cpp disassembler.h
 	$(CC) $(CFLAGS) disassembler.cpp
 
 clean:
-	rm -f *.o disassem *.txt *.exe
+	rm -f *.o disassem *.txt 
