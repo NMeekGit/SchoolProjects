@@ -41,10 +41,12 @@ class Disassembler {
     int inputSizeOBJ;
     int inputSizeSYM;
     int symTableSize;
-    int txtSize;
+    int txtRecordSize;
+    int* txtSize;
     int rowSize;
 
     string* txtRecord;
+    string* txtStart;
     string* inputOBJ;
     string* inputSYM;
     string** symTable;

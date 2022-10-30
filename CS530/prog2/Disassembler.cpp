@@ -35,6 +35,8 @@ int Disassembler::MAX_SIZE = 100;
 
 Disassembler::Disassembler() {
 
+    txtSize = new int[MAX_SIZE];
+    txtStart = new string[MAX_SIZE];
     txtRecord = new string[MAX_SIZE];
     symTable = new string*[MAX_SIZE];
     
@@ -108,8 +110,7 @@ void Disassembler::OpenFile(int index, string file, string symbol){
     }
     cout << "\nSize: " << inputSizeSYM << "\n" << endl;
 
-    GrabTXT();
-    GrabSYM();
+    Solve();
 };
 
 void Disassembler::PrintFile() {
@@ -128,24 +129,38 @@ void Disassembler::PrintFile() {
 
 };
 
+void Disassembler::Solve() {
+
+    GrabTXT();
+    GrabSYM();
+
+    GrabTXTInfo();
+};
+
 void Disassembler::GrabTXT() {
 
-    cout << "Grabbing Text Record" << endl;
-
+    cout << "\nGrabbing Text Record\n" << endl;
+    txtRecordSize = 0;
     for (int i = 0; i <= inputSizeOBJ; i++) {
 
         if (inputOBJ[i][0] == 'T') {
 
-            txtRecord[i] = inputOBJ[i];
-
-            cout << "Text Record Recieved: " << setw(12) << txtRecord[i] << endl;
+            txtRecord[txtRecordSize] = inputOBJ[i];
+            txtRecordSize++;
         }
     }
+
+    cout << "\tText Record Recieved:" << endl;
+    for (int i = 0; i < txtRecordSize ; i++) {
+        cout << "\t\t" << txtRecord[i] << endl;
+    }
+
+    cout << "\tText Record Size: " << txtRecordSize << endl;
 };
 
 void Disassembler::GrabSYM() {
 
-    cout << "Grabbing Symbol Information" << endl;
+    cout << "\nGrabbing Symbol Information\n" << endl;
 
     int row = 0;
     symTableSize = 0;
@@ -166,10 +181,49 @@ void Disassembler::GrabSYM() {
         }
     }
 
-    cout << "Current Symbol Table:" << endl;
+    cout << "\tCurrent Symbol Table:" << endl;
     for (int i = 0; i < symTableSize; ++i) {
-        cout << symTable[i][0] << setw(8) << symTable[i][1] << endl;
+        cout << "\t\t" << symTable[i][0] << setw(8) << symTable[i][1] << endl;
     }
-    cout << "Symbol Table Size: " << symTableSize << endl;
+    cout << "\tSymbol Table Size: " << symTableSize << endl;
+};
+
+void Disassembler::GrabTXTInfo() {
+
+    cout << "\nGrabing Text Info\n" << endl;
+
+    int i;
+    for (i = 0; i < txtRecordSize; i++) {
+
+        txtSize[i] = HexToDec(txtRecord[i].substr(7,2)); // Retrieve Text Record actual size
+
+        txtStart[i] = txtRecord[i].substr(1,6); // Grab Start Address
+        txtRecord[i] = txtRecord[i].erase(0,9); // Remove the first 9 hex digits.
+
+    }
+
+    cout << "\tText Record Recieved:" << endl;
+    for (i = 0; i < txtRecordSize; i++) {
+        cout << "\t\tSize: " << txtSize[i] << setw(12) << "Start: " << txtStart[i] << setw(18) << "Record: " << txtRecord[i] << endl;
+    }
+
+};
+
+int Disassembler::HexToDec(string hex){
+	int length = hex.size();
+	int base = 1;
+	int dec = 0;
+
+	for (int i = length-1; i >= 0; i--) {
+		if (hex[i] >= '0' && hex[i] <= '9') {
+			dec += (int(hex[i])-48) * base;
+			base *= 16;
+		}
+		else if (hex[i] >= 'A' && hex[i] <= 'F') {
+			dec += (int(hex[i])-55) * base;
+			base *= 16;
+		}
+	}
+	return dec;
 };
 
