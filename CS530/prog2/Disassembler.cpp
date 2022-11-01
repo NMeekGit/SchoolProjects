@@ -39,9 +39,13 @@ Disassembler::Disassembler() {
     txtStart = new string[MAX_SIZE];
     txtRecord = new string[MAX_SIZE];
     symTable = new string*[MAX_SIZE];
+    litTable = new string*[MAX_SIZE];
     
     for (int i = 0; i < MAX_SIZE; i++) {
         symTable[i] = new string[2];
+    }
+    for (int i = 0; i < MAX_SIZE; i++) {
+        litTable[i] = new string[4];
     }
 
 };
@@ -163,27 +167,40 @@ void Disassembler::GrabSYM() {
     cout << "\nGrabbing Symbol Information\n" << endl;
 
     symTableSize = 0;
+    litTableSize = 0;
     for (int i = 0; i < inputSizeSYM; i++) {
 
-        if (inputSYM[i][0] != 'S' && inputSYM[i][0] != '-') {
+        if (inputSYM[i][0] == 'S') {
 
-            istringstream ss(inputSYM[i]);
-            string sym, addr, flag;
-            while (ss >> sym >> addr >> flag) {
+            for (int j = i+2; j < inputSizeSYM && (inputSYM[j][0] != 'N'); j++) {
 
-                symTable[symTableSize][0] = sym;
-                symTable[symTableSize][1] = addr;
-                symTableSize++;
+                FillSYMTable(j);
 
             }
         }
+
+        if (inputSYM[i][0] == 'N') {
+
+            for (int j = i+2; j < inputSizeSYM; j++) {
+
+                FillLITTable(j);
+
+            }
+        }
+
     }
 
     cout << "\tCurrent Symbol Table:" << endl;
     for (int i = 0; i < symTableSize; ++i) {
         cout << "\t\t" << symTable[i][0] << setw(8) << symTable[i][1] << endl;
     }
-    cout << "\tSymbol Table Size: " << symTableSize << endl;
+    cout << "\tSymbol Table Size: " << symTableSize << "\n" << endl;
+
+    cout << "\tCurrent Litteral Table:" << endl;
+    for (int i = 0; i < litTableSize; ++i) {
+        cout << "\t\t" << litTable[i][0] << setw(12) << litTable[i][1] << setw(12) << litTable[i][2] << setw(12) << litTable[i][3] << endl;
+    }
+    cout << "\tLitteral Table Size: " << litTableSize << endl;
 };
 
 void Disassembler::GrabTXTInfo() {
@@ -203,6 +220,46 @@ void Disassembler::GrabTXTInfo() {
     cout << "\tText Record Recieved:" << endl;
     for (i = 0; i < txtRecordSize; i++) {
         cout << "\t\tSize: " << txtSize[i] << setw(12) << "Start: " << txtStart[i] << setw(18) << "Record: " << txtRecord[i] << endl;
+    }
+
+};
+
+void Disassembler::FillSYMTable(int i) {
+
+    istringstream ss(inputSYM[i]);
+    string sym, addr, flag;
+    while (ss >> sym >> addr >> flag) {
+
+        symTable[symTableSize][0] = sym;
+        symTable[symTableSize][1] = addr;
+        symTableSize++;
+
+    }
+};
+
+void Disassembler::FillLITTable(int i) {
+
+    istringstream ss(inputSYM[i]);
+    string name, lit, len, addr;
+    while (ss >> name >> lit >> len >> addr) {
+
+        litTable[litTableSize][0] = name;
+        litTable[litTableSize][1] = lit;
+        litTable[litTableSize][2] = len;
+        litTable[litTableSize][3] = addr;
+        litTableSize++;
+
+    }
+
+    istringstream tt(inputSYM[i]);
+    while (tt >> lit >> len >> addr) {
+        if (lit[0] == '=') {
+            litTable[litTableSize][0] = "";
+            litTable[litTableSize][1] = lit;
+            litTable[litTableSize][2] = len;
+            litTable[litTableSize][3] = addr;
+            litTableSize++;
+        }
     }
 
 };

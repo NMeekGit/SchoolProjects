@@ -41,6 +41,7 @@ class Disassembler {
     int inputSizeOBJ;
     int inputSizeSYM;
     int symTableSize;
+    int litTableSize;
     int txtRecordSize;
     int* txtSize;
     int rowSize;
@@ -50,6 +51,7 @@ class Disassembler {
     string* inputOBJ;
     string* inputSYM;
     string** symTable;
+    string** litTable;
     string** output;
 
     ifstream fileOBJ;
@@ -72,6 +74,9 @@ class Disassembler {
         void Solve();                       // Begin parsing
         void FindFlags();                   // Find nixbpe
         void GrabInstruction();             // Grab Instructions
+
+        void FillSYMTable(int);
+        void FillLITTable(int);
 
         int HexToDec(string);               // Convert string hexadecimal to decimal
 
