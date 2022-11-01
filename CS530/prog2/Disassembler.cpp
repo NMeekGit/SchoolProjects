@@ -40,6 +40,7 @@ Disassembler::Disassembler() {
     txtRecord = new string[MAX_SIZE];
     symTable = new string*[MAX_SIZE];
     litTable = new string*[MAX_SIZE];
+	output = new string*[MAX_SIZE];
     
     for (int i = 0; i < MAX_SIZE; i++) {
         symTable[i] = new string[2];
@@ -47,6 +48,9 @@ Disassembler::Disassembler() {
     for (int i = 0; i < MAX_SIZE; i++) {
         litTable[i] = new string[4];
     }
+	for (int i = 0; i < MAX_SIZE; i++) {
+		output[i] = new string[5];
+	}
 
 };
 
@@ -122,9 +126,13 @@ void Disassembler::PrintFile() {
     ofstream fileTXT("out.lst");
 
     if (fileTXT.is_open()) {
+		
+		int l = 12;
+		for (int i = 0; i < outputSize; i++) {
 
-        fileTXT << "Hello World" << endl;
+			fileTXT << left << setw(l) <<  output[i][0] << setw(l) << output[i][1] << setw(l) << output[i][2] << setw(l) << output[i][3] << setw(l) << output[i][4] << endl;
 
+		}
     }
 
     fileTXT.close();
@@ -135,10 +143,27 @@ void Disassembler::PrintFile() {
 
 void Disassembler::Solve() {
 
+	GrabHead();
     GrabTXT();
     GrabSYM();
 
     GrabTXTInfo();
+};
+
+void Disassembler::GrabHead() {
+
+	cout << "\nGrabbing Header Record\n" << endl;
+
+	string programName = inputOBJ[0].substr(1,6);
+	string startAddr = inputOBJ[0].substr(7,6);
+
+	output[0][0] = startAddr;
+	output[0][1] = programName;
+	output[0][2] = "START";
+	output[0][3] = "0";
+	output[0][4] = "";
+	outputSize = 1;
+
 };
 
 void Disassembler::GrabTXT() {
@@ -262,6 +287,44 @@ void Disassembler::FillLITTable(int i) {
         }
     }
 
+};
+
+void Disassembler::FindFlags() {
+	
+	simple = false;
+	indirect = false;
+	immediate = false;
+	indexed = false;
+	pc = false;
+	base = false;
+	format2 = false;
+	format3 = false;
+	format4 = false;
+	
+	for (int i = 0; i < txtRecordSize; i++) {
+
+		string hex = HexToBin(txtRecord[i].substr(1,2));
+		string flagValue = MaskFlag(hex);
+
+		if (flagValue == "00110000") { simple = true };
+		else if (flagValue == "00110001") { simple = true; format4 = true; };
+		else if (flagValue == "00110010") { simple = true; pc = true; };
+		else if (flagValue == "00110100") { simple = true; base = true; };
+		else if (flagValue == "00111000") { simple = true; indexed = true; };
+		else if (flagValue == "00111001") { simple = true; indexed = true; format4 = true; };
+		else if (flagValue == "00111010") { simple = true; indexed = true; pc = true; };
+		else if (flagValue == "00111100") { simple = true; indexed = true; base = true; };
+		else if (flagValue == "00100000") { indirect = true; };
+		else if (flagValue == "00100001") { indirect = true; format4 = true; };
+		else if (flagValue == "00100010") { indirect = true; pc = true; };
+		else if (flagValue == "00100100") { indirect = true; base = true };
+		else if (flagValue == "00010000") { immediate = true; };
+		else if (flagValue == "00010001") { immediate = true; format4 = true; };
+		else if (flagValue == "00010010") { immediate = true; pc = true; };
+		else if (flagValue == "00010100") { immediate = true; base = true; };
+
+		
+	}
 };
 
 int Disassembler::HexToDec(string hex){

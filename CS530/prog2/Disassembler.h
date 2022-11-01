@@ -43,6 +43,7 @@ class Disassembler {
     int symTableSize;
     int litTableSize;
     int txtRecordSize;
+	int outputSize;
     int* txtSize;
     int rowSize;
 
@@ -67,6 +68,7 @@ class Disassembler {
         void OpenFile(int, string, string);         // Read in File
         void PrintFile();                   // Output new file
 
+		void GrabHead();
         void GrabTXT();                     // Grab TXT Record from input
         void GrabSYM();                     // Grab SYM Table from input
         void GrabTXTInfo();                 // Grab TEXT Record Info
