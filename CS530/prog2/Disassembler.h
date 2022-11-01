@@ -19,6 +19,8 @@
 #include <iomanip>
 #include <fstream>
 #include <cmath>
+#include <map>
+#include <algorithm>
 
 using namespace std;
 
@@ -74,17 +76,20 @@ class Disassembler {
         void GrabTXTInfo();                 // Grab TEXT Record Info
         
         void Solve();                       // Begin parsing
-        void FindFlags();                   // Find nixbpe
-        void GrabInstruction();             // Grab Instructions
+        void LoadOutput(int, int);
+        void FindFlags(int);                   // Find nixbpe
+        string GrabInstruction(int);             // Grab Instructions
 
         void FillSYMTable(int);
         void FillLITTable(int);
+        void ResetFlags();
 
         int HexToDec(string);               // Convert string hexadecimal to decimal
 
-        uint8_t StringToUint(string);       // Convert string hex to uint
-        uint8_t MaskOP(string);             // Mask for Operand
-        uint8_t MaskFlag(string);           // Mask for Flags
+        string HexToBin(string);       // Convert string hex to uint
+        string MaskOP(string);             // Mask for Operand
+        string MaskFlag(string);           // Mask for Flags
+        string AddHex(string, string);
 };
 
 #endif

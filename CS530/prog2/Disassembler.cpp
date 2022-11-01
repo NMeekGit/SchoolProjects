@@ -1,5 +1,31 @@
 #include "Disassembler.h"
 
+map<char, int> hex_dec(void) {
+    map<char, int> m{ { '0', 0 }, { '1', 1 },
+                      { '2', 2 }, { '3', 3 },
+                      { '4', 4 }, { '5', 5 },
+                      { '6', 6 }, { '7', 7 },
+                      { '8', 8 }, { '9', 9 },
+                      { 'A', 10 }, { 'B', 11 },
+                      { 'C', 12 }, { 'D', 13 },
+                      { 'E', 14 }, { 'F', 15 } };
+
+    return m;
+};
+
+map<int, char> dec_hex(void) {
+    map<int, char> m{ { 0, '0' }, { 1, '1' },
+                      { 2, '2' }, { 3, '3' },
+                      { 4, '4' }, { 5, '5' },
+                      { 6, '6' }, { 7, '7' },
+                      { 8, '8' }, { 9, '9' },
+                      { 10, 'A' }, { 11, 'B' },
+                      { 12, 'C' }, { 13, 'D' },
+                      { 14, 'E' }, { 15, 'F' } };
+
+    return m;
+};
+
 const string Disassembler::ops[] = {
     "18","58","90","40","B4","28",
     "88","A0","24","64","9C","C4",
@@ -148,6 +174,9 @@ void Disassembler::Solve() {
     GrabSYM();
 
     GrabTXTInfo();
+    for (int currentTXT = 0; currentTXT < txtRecordSize; currentTXT++) {
+        FindFlags(currentTXT);
+    }
 };
 
 void Disassembler::GrabHead() {
@@ -155,7 +184,7 @@ void Disassembler::GrabHead() {
 	cout << "\nGrabbing Header Record\n" << endl;
 
 	string programName = inputOBJ[0].substr(1,6);
-	string startAddr = inputOBJ[0].substr(7,6);
+	string startAddr = inputOBJ[0].substr(9,4);
 
 	output[0][0] = startAddr;
 	output[0][1] = programName;
@@ -289,7 +318,7 @@ void Disassembler::FillLITTable(int i) {
 
 };
 
-void Disassembler::FindFlags() {
+void Disassembler::FindFlags(int current) {
 	
 	simple = false;
 	indirect = false;
@@ -301,30 +330,119 @@ void Disassembler::FindFlags() {
 	format3 = false;
 	format4 = false;
 	
-	for (int i = 0; i < txtRecordSize; i++) {
+	for (int i = 0; i < txtSize[current]; i++) {
 
 		string hex = HexToBin(txtRecord[i].substr(1,2));
 		string flagValue = MaskFlag(hex);
 
-		if (flagValue == "00110000") { simple = true };
-		else if (flagValue == "00110001") { simple = true; format4 = true; };
-		else if (flagValue == "00110010") { simple = true; pc = true; };
-		else if (flagValue == "00110100") { simple = true; base = true; };
-		else if (flagValue == "00111000") { simple = true; indexed = true; };
-		else if (flagValue == "00111001") { simple = true; indexed = true; format4 = true; };
-		else if (flagValue == "00111010") { simple = true; indexed = true; pc = true; };
-		else if (flagValue == "00111100") { simple = true; indexed = true; base = true; };
-		else if (flagValue == "00100000") { indirect = true; };
-		else if (flagValue == "00100001") { indirect = true; format4 = true; };
-		else if (flagValue == "00100010") { indirect = true; pc = true; };
-		else if (flagValue == "00100100") { indirect = true; base = true };
-		else if (flagValue == "00010000") { immediate = true; };
-		else if (flagValue == "00010001") { immediate = true; format4 = true; };
-		else if (flagValue == "00010010") { immediate = true; pc = true; };
-		else if (flagValue == "00010100") { immediate = true; base = true; };
+		if (flagValue == "00110000") { simple = true; }
+		else if (flagValue == "00110001") { simple = true; format4 = true; }
+		else if (flagValue == "00110010") { simple = true; pc = true; }
+		else if (flagValue == "00110100") { simple = true; base = true; }
+		else if (flagValue == "00111000") { simple = true; indexed = true; }
+		else if (flagValue == "00111001") { simple = true; indexed = true; format4 = true; }
+		else if (flagValue == "00111010") { simple = true; indexed = true; pc = true; }
+		else if (flagValue == "00111100") { simple = true; indexed = true; base = true; }
+		else if (flagValue == "00100000") { indirect = true; }
+		else if (flagValue == "00100001") { indirect = true; format4 = true; }
+		else if (flagValue == "00100010") { indirect = true; pc = true; }
+		else if (flagValue == "00100100") { indirect = true; base = true; }
+		else if (flagValue == "00010000") { immediate = true; }
+		else if (flagValue == "00010001") { immediate = true; format4 = true; }
+		else if (flagValue == "00010010") { immediate = true; pc = true; }
+		else if (flagValue == "00010100") { immediate = true; base = true; }
 
-		
+		LoadOutput(i, current);
 	}
+};
+
+void Disassembler::LoadOutput(int i, int current) {
+
+    cout << "\nLoad Output\n" << endl;
+
+    int j = 0;
+    bool lit = false;
+
+    // Load Memory Location
+    cout << "\tLoad Memory" << setw(8) << "Row: " << outputSize << endl;
+    if (i == 0) { output[outputSize][0] = txtStart[j]; }
+    
+    else if (format2) { output[outputSize][0] = AddHex(output[outputSize-1][0], "0002");}
+    else if (format3) { output[outputSize][0] = AddHex(output[outputSize-1][0], "0003");}
+    else if (format4) { output[outputSize][0] = AddHex(output[outputSize-1][0], "0004");}
+    j++;
+
+    // Load Symbol
+    cout << "\tLoad Symbol" << endl;
+    for (int k = 0; k < symTableSize; k++) {
+
+        if (output[outputSize][0] == symTable[k][1]) {
+            output[outputSize][1] = symTable[k][1];
+            break;
+        }
+        else { output[outputSize][1] = ""; }
+    }
+    for (int k = 0; k < litTableSize; k++) {
+        
+        if (output[outputSize][0] == litTable[k][1]) {
+            output[outputSize][1] = litTable[k][1];
+            lit = true;
+            break;
+        }
+        else { output[outputSize][1] = ""; }
+    }
+
+    // Load Operand
+    cout << "\tLoad Operand" << endl;
+    if (lit) {
+        output[outputSize][2] = "BYTE";
+    }
+    else {
+        output[outputSize][2] = GrabInstruction(current);
+    }
+    if (format4) { output[outputSize][2].insert(0, "+"); }
+
+    output[outputSize][3] = "";
+    output[outputSize][4] = "";
+
+    if(format2) { txtRecord[current].erase(0,4); }
+    else if (format3) { txtRecord[current].erase(0,6); }
+    else if (format4) { txtRecord[current].erase(0,8); }
+
+    ResetFlags();
+    outputSize++;
+}
+
+string Disassembler::GrabInstruction(int current) {
+
+    cout << "\t\tGrab Instructions" << endl;
+    
+    string hex = HexToBin(txtRecord[current].substr(0,2));
+    string instrValue = MaskOP(hex);
+
+    int i = 0;
+    while (!ops[i].empty()) {
+        cout << "\t\t\tCheck i: " << i << endl;
+        if (instrValue == HexToBin(ops[i].c_str())) {
+            return mnemonics[i];
+        }
+        i++;
+
+    }
+}
+
+void Disassembler::ResetFlags() {
+    
+	simple = false;
+	indirect = false;
+	immediate = false;
+	indexed = false;
+	pc = false;
+	base = false;
+	format2 = false;
+	format3 = false;
+	format4 = false;
+
 };
 
 int Disassembler::HexToDec(string hex){
@@ -345,3 +463,125 @@ int Disassembler::HexToDec(string hex){
 	return dec;
 };
 
+string Disassembler::HexToBin(string hex) {
+	int i = 0;
+	string bin = "";
+	while (hex[i]) {
+		switch (hex[i]) {
+			case '0':
+				bin += "0000";
+				break;
+			case '1':
+				bin += "0001";
+				break;
+			case '2':
+				bin += "0010";
+				break;
+			case '3':
+				bin += "0011";
+				break;
+			case '4':
+				bin += "0100";
+				break;
+			case '5':
+				bin += "0101";
+				break;
+			case '6':
+				bin += "0110";
+				break;
+			case '7':
+				bin += "0111";
+				break;
+			case '8':
+				bin += "1000";
+				break;
+			case '9':
+				bin += "1001";
+				break;
+			case 'A':
+			case 'a':
+				bin += "1010";
+				break;
+			case 'B':
+			case 'b':
+				bin += "1011";
+				break;
+			case 'C':
+			case 'c':
+				bin += "1100";
+				break;
+			case 'D':
+			case 'd':
+				bin += "1101";
+				break;
+			case 'E':
+			case 'e':
+				bin += "1110";
+				break;
+			case 'F':
+			case 'f':
+				bin += "1111";
+				break;
+		}
+		i++;
+	}
+	return bin;
+};
+
+string Disassembler::MaskFlag(string value) {
+	string mask = "00111111";
+	string newValue = "";
+	for(int i = 0; i < (int)value.length(); i++) {
+		newValue += (char)(((mask[i] - '0') & (value[i] - '0')) + '0');
+	}
+	return newValue;
+};
+
+string Disassembler::MaskOP(string value) {
+	string mask = "11111100";
+	string newValue = "";
+	for(int i = 0; i < (int)value.length(); i++) {
+		newValue += (char)(((mask[i] - '0') & (value[i] - '0')) + '0');
+	}
+	return newValue;
+};
+
+string Disassembler::AddHex(string a, string b) {
+
+    map<char, int> m = hex_dec();
+    map<int, char> k = dec_hex();
+
+    if (a.length() < b.length()) { swap(a,b); }
+
+    int aLen = a.length(), bLen = b.length();
+
+    string ans = "";
+
+    int carry = 0, i, j;
+
+    for (i = aLen - 1, j = bLen - 1; j >= 0; i--, j--) {
+
+        int sum = m[a[i]] + m[b[j]] + carry;
+        int addBit = k[sum % 16];
+
+        ans.push_back(addBit);
+        carry = sum / 16;
+
+    }
+
+    while (i >= 0) {
+
+        int sum = m[a[i]] + carry;
+        int addBit = k[sum % 16];
+
+        ans.push_back(addBit);
+        carry = sum / 16;
+        i--;
+    }
+
+    if (carry) { ans.push_back(k[carry]); }
+
+    reverse(ans.begin(), ans.end());
+
+    return ans;
+}
