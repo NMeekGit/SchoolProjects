@@ -54,7 +54,7 @@ const string Disassembler::mnemonics[] = {
 
 const string Disassembler::mnemonics2[] = {
 	"ADDR","COMPR","DIVR","MULR","RMO","SHIFTL",
-	"SHIFTR","SUBR","SVC","TIXR"
+	"SHIFTR","SUBR","SVC","TIXR","CLEAR"
 };
 
 const string Disassembler::directives[] = {
@@ -161,7 +161,7 @@ void Disassembler::PrintFile() {
     if (fileTXT.is_open()) {
 		
 		int l = 12;
-		for (int i = 0; i < outputSize; i++) {
+		for (int i = 0; i <= outputSize; i++) {
 
 			fileTXT << left << setw(l) <<  output[i][0] << setw(l) << output[i][1] << setw(l) << output[i][2] << setw(l) << output[i][3] << setw(l) << output[i][4] << endl;
 
@@ -426,6 +426,14 @@ void Disassembler::LoadOutput(int i, int current) {
     }
 
     if (format4) { output[outputSize][2].insert(0, "+"); }
+    
+    // Check Format 2
+    for (int k = 0; !mnemonics2[k].empty(); k++) {
+        if (output[outputSize][2] == mnemonics2[k]) {
+            cout << "\t\tFormat 2" << endl;
+            format2 = true;
+        }
+    }
 
     // Load TAS
     cout << "\tLoad TAS" << endl;
@@ -464,13 +472,12 @@ void Disassembler::FinishOutput() {
         output[outputSize][4] = " ";
     }
 
-    //outputSize++;
     output[outputSize][0] = " ";
     output[outputSize][1] = " ";
     output[outputSize][2] = "END";
     output[outputSize][3] = programName;
     output[outputSize][4] = " ";
-}
+};
 
 string Disassembler::GrabInstruction(int current) {
 
@@ -542,7 +549,6 @@ void Disassembler::ResetFlags() {
 	pc = false;
 	base = false;
 	format2 = false;
-	format3 = true;
 	format4 = false;
 
 };
