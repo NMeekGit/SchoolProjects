@@ -20,6 +20,7 @@
 #include <fstream>
 #include <cmath>
 #include <map>
+#include <unordered_map>
 #include <algorithm>
 
 using namespace std;
@@ -29,6 +30,7 @@ class Disassembler {
     static const string ops[];
     static const string mnemonics[];
     static const string mnemonics2[];
+    static const string directives[];
 
     bool format2;
     bool format3;
@@ -39,6 +41,8 @@ class Disassembler {
     bool indexed;
     bool pc;
     bool base;
+    bool moveIndex;
+    bool checkBase;
 
     int inputSizeOBJ;
     int inputSizeSYM;
@@ -46,10 +50,14 @@ class Disassembler {
     int litTableSize;
     int txtRecordSize;
 	int outputSize;
+    int currSymLoc;
     int* txtSize;
     int rowSize;
 
+    string programName;
     string nextAddr;
+    string baseAddr;
+    string indexAddr;
     string* txtRecord;
     string* txtStart;
     string* inputOBJ;
@@ -78,18 +86,23 @@ class Disassembler {
         
         void Solve();                       // Begin parsing
         void LoadOutput(int, int);
+        void FinishOutput();
         void FindFlags(int);                   // Find nixbpe
         string GrabInstruction(int);             // Grab Instructions
+        string GrabSymbol(int);
 
         void FillSYMTable(int);
         void FillLITTable(int);
         void ResetFlags();
+        void binMap(unordered_map<string,char>*);
 
         int HexToDec(string);               // Convert string hexadecimal to decimal
 
+        string BinToHex(string);
         string HexToBin(string);       // Convert string hex to uint
         string MaskOP(string);             // Mask for Operand
         string MaskFlag(string);           // Mask for Flags
+        string MaskREC(string);           // Mask for PC Record
         string AddHex(string, string);
 };
 

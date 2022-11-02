@@ -57,6 +57,10 @@ const string Disassembler::mnemonics2[] = {
 	"SHIFTR","SUBR","SVC","TIXR"
 };
 
+const string Disassembler::directives[] = {
+    "START", "END", "BYTE", "WORD", "RESB", "RESW"
+};
+
 int Disassembler::MAX_SIZE = 100;
 
 Disassembler::Disassembler() {
@@ -78,6 +82,9 @@ Disassembler::Disassembler() {
 		output[i] = new string[5];
 	}
 
+    moveIndex = false;
+    checkBase = false;
+    currSymLoc = 0;
 };
 
 Disassembler::~Disassembler() {
@@ -178,13 +185,15 @@ void Disassembler::Solve() {
     for (int currentTXT = 0; currentTXT < txtRecordSize; currentTXT++) {
         FindFlags(currentTXT);
     }
+
+    FinishOutput();
 };
 
 void Disassembler::GrabHead() {
 
 	cout << "\nGrabbing Header Record\n" << endl;
 
-	string programName = inputOBJ[0].substr(1,6);
+	programName = inputOBJ[0].substr(1,6);
 	string startAddr = inputOBJ[0].substr(9,4);
 
 	output[0][0] = startAddr;
@@ -286,7 +295,7 @@ void Disassembler::FillSYMTable(int i) {
     while (ss >> sym >> addr >> flag) {
 
         symTable[symTableSize][0] = sym;
-        symTable[symTableSize][1] = addr;
+        symTable[symTableSize][1] = addr.substr(2,4);
         symTableSize++;
 
     }
@@ -356,9 +365,23 @@ void Disassembler::LoadOutput(int i, int current) {
     int j = current;
     bool lit = false;
 
+    if (checkBase) {
+        string symbol;
+        output[outputSize][0] = " ";
+        output[outputSize][1] = " ";
+        output[outputSize][2] = "BASE";
+        if (output[outputSize-1][3].front() == '#' || output[outputSize-1][3].front() == '@')
+           symbol = output[outputSize-1][3].erase(0,1);
+        output[outputSize][3] = symbol;
+        output[outputSize][4] = " ";
+        outputSize++;
+        checkBase = false;
+        return;
+    }
+
     // Load Memory Location
     cout << "\tLoad Memory" << setw(8) << "Row: " << outputSize << endl;
-    if (i == 0) { output[outputSize][0] = txtStart[j]; }
+    if (i == 0) { output[outputSize][0] = txtStart[j].substr(2,4); }
     else        { output[outputSize][0] = nextAddr; }
     
     if      (format2) { nextAddr = AddHex(output[outputSize][0], "0002");}
@@ -372,6 +395,7 @@ void Disassembler::LoadOutput(int i, int current) {
 
         if (output[outputSize][0] == symTable[k][1]) {
             output[outputSize][1] = symTable[k][0];
+            currSymLoc++;
             break;
         }
         else { output[outputSize][1] = " "; }
@@ -394,11 +418,24 @@ void Disassembler::LoadOutput(int i, int current) {
     else {
         output[outputSize][2] = GrabInstruction(current);
     }
+
+    if (output[outputSize][2] == "LDX") { indexAddr = output[outputSize][0]; }
+    else if (output[outputSize][2] == "LDB") { 
+        baseAddr = output[outputSize][0]; 
+        checkBase = true;
+    }
+
     if (format4) { output[outputSize][2].insert(0, "+"); }
 
     // Load TAS
     cout << "\tLoad TAS" << endl;
     output[outputSize][3] = "0";
+    
+    // Search For Symbol
+    output[outputSize][3] = GrabSymbol(current);
+    if (indirect) { output[outputSize][3].insert(0, "@"); }
+    else if (immediate) { output[outputSize][3].insert(0, "#"); }
+    else if (indexed) { output[outputSize][3].append(",X"); }
 
     // Load OPJ Code
     cout << "\tLoad OPJ Code" << endl;
@@ -415,6 +452,24 @@ void Disassembler::LoadOutput(int i, int current) {
     cout << "\tNew TXTRecord: " << txtRecord[current] << endl;
 
     outputSize++;
+};
+
+void Disassembler::FinishOutput() {
+
+    for (int i = currSymLoc; i < symTableSize; i++, outputSize++) {
+        output[outputSize][0] = symTable[i][1];
+        output[outputSize][1] = symTable[i][0];
+        output[outputSize][2] = "RESB";
+        output[outputSize][3] = "0";
+        output[outputSize][4] = " ";
+    }
+
+    //outputSize++;
+    output[outputSize][0] = " ";
+    output[outputSize][1] = " ";
+    output[outputSize][2] = "END";
+    output[outputSize][3] = programName;
+    output[outputSize][4] = " ";
 }
 
 string Disassembler::GrabInstruction(int current) {
@@ -434,6 +489,48 @@ string Disassembler::GrabInstruction(int current) {
 
     }
     return "ERROR";
+};
+
+string Disassembler::GrabSymbol(int current) {
+
+    string record = "", pcAddr = "";
+    if (format4) { record = txtRecord[current].substr(4,4); }
+    else if (!base && !pc) { return "0"; }
+    else { 
+
+        record = txtRecord[current].substr(3,3);
+        if (pc) {
+            pcAddr = AddHex(output[outputSize][0], "0003");
+            record = AddHex(record, pcAddr);
+            record = record.replace(0, 1, "0");
+        }
+        else if (base) {
+            record = AddHex(record, baseAddr);
+        }
+
+        if (moveIndex && indexed) {
+            record = indexAddr;
+        }
+        else if (indexed) { 
+            record = AddHex(record, indexAddr); 
+            moveIndex = true;
+            for (int i = 0; i < symTableSize; i++) {
+                if (record == symTable[i][1] && symTable[i][0].substr(0,5) == "TABLE") {
+                    indexAddr = AddHex(record, "1770");
+                }
+            }
+        }
+
+        
+    }
+    
+    for (int i = 0; i < symTableSize; i++) {
+        if (record == symTable[i][1]) { return symTable[i][0]; }
+    }
+    for (int i = 0; i < litTableSize; i++) {
+        if (record == litTable[i][3]) { return litTable[i][1]; }
+    }
+
 };
 
 void Disassembler::ResetFlags() {
@@ -467,6 +564,49 @@ int Disassembler::HexToDec(string hex){
 	}
 	return dec;
 };
+
+void Disassembler::binMap(unordered_map<string, char> *um) {
+    (*um)["0000"] = '0';
+    (*um)["0001"] = '1';
+    (*um)["0010"] = '2';
+    (*um)["0011"] = '3';
+    (*um)["0100"] = '4';
+    (*um)["0101"] = '5';
+    (*um)["0110"] = '6';
+    (*um)["0111"] = '7';
+    (*um)["1000"] = '8';
+    (*um)["1001"] = '9';
+    (*um)["1010"] = 'A';
+    (*um)["1011"] = 'B';
+    (*um)["1100"] = 'C';
+    (*um)["1101"] = 'D';
+    (*um)["1110"] = 'E';
+    (*um)["1111"] = 'F';
+};
+
+string Disassembler::BinToHex(string bin) {
+
+    int l = bin.size();
+    int t = bin.find_first_of('.');
+
+    for (int i = 1; i <= (4 - l % 4) % 4; i++) {
+        bin = '0' + bin;
+    }
+
+    unordered_map<string, char> binhexMap;
+    binMap(&binhexMap);
+
+    int i = 0;
+    string hex = "";
+
+    while (i != bin.size()) {
+        hex += binhexMap[bin.substr(i,4)];
+        i += 4;
+    }
+
+    return hex;
+
+}
 
 string Disassembler::HexToBin(string hex) {
 	int i = 0;
@@ -544,6 +684,15 @@ string Disassembler::MaskFlag(string value) {
 
 string Disassembler::MaskOP(string value) {
 	string mask = "11111100";
+	string newValue = "";
+	for(int i = 0; i < (int)value.length(); i++) {
+		newValue += (char)(((mask[i] - '0') & (value[i] - '0')) + '0');
+	}
+	return newValue;
+};
+
+string Disassembler::MaskREC(string value) {
+	string mask = "00000111";
 	string newValue = "";
 	for(int i = 0; i < (int)value.length(); i++) {
 		newValue += (char)(((mask[i] - '0') & (value[i] - '0')) + '0');
