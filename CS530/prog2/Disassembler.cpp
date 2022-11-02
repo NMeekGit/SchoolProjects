@@ -49,7 +49,7 @@ const string Disassembler::mnemonics[] = {
     "SHIFTL","SHIFTR","SIO","SSK","STA","STB",
     "STCH","STF","STI","STL","STS","STSW",
     "STT","STX","SUB","SUBF","SUBR","SVC",
-    "TD","TIO","TIX","TIXR","WB"
+    "TD","TIO","TIX","TIXR","WD"
 };
 
 const string Disassembler::mnemonics2[] = {
@@ -174,6 +174,7 @@ void Disassembler::Solve() {
     GrabSYM();
 
     GrabTXTInfo();
+
     for (int currentTXT = 0; currentTXT < txtRecordSize; currentTXT++) {
         FindFlags(currentTXT);
     }
@@ -190,7 +191,7 @@ void Disassembler::GrabHead() {
 	output[0][1] = programName;
 	output[0][2] = "START";
 	output[0][3] = "0";
-	output[0][4] = "";
+	output[0][4] = " ";
 	outputSize = 1;
 
 };
@@ -320,22 +321,14 @@ void Disassembler::FillLITTable(int i) {
 
 void Disassembler::FindFlags(int current) {
 	
-	simple = false;
-	indirect = false;
-	immediate = false;
-	indexed = false;
-	pc = false;
-	base = false;
-	format2 = false;
-	format3 = false;
-	format4 = false;
-	
-	for (int i = 0; i < txtSize[current]; i++) {
+	for (int i = 0; (txtRecord[current].length() != 1) && !(txtRecord[current].empty()); i++) {
 
-		string hex = HexToBin(txtRecord[i].substr(1,2));
+        ResetFlags();
+
+		string hex = HexToBin(txtRecord[current].substr(1,2));
 		string flagValue = MaskFlag(hex);
 
-		if (flagValue == "00110000") { simple = true; }
+		if      (flagValue == "00110000") { simple = true; }
 		else if (flagValue == "00110001") { simple = true; format4 = true; }
 		else if (flagValue == "00110010") { simple = true; pc = true; }
 		else if (flagValue == "00110100") { simple = true; base = true; }
@@ -360,16 +353,17 @@ void Disassembler::LoadOutput(int i, int current) {
 
     cout << "\nLoad Output\n" << endl;
 
-    int j = 0;
+    int j = current;
     bool lit = false;
 
     // Load Memory Location
     cout << "\tLoad Memory" << setw(8) << "Row: " << outputSize << endl;
     if (i == 0) { output[outputSize][0] = txtStart[j]; }
+    else        { output[outputSize][0] = nextAddr; }
     
-    else if (format2) { output[outputSize][0] = AddHex(output[outputSize-1][0], "0002");}
-    else if (format3) { output[outputSize][0] = AddHex(output[outputSize-1][0], "0003");}
-    else if (format4) { output[outputSize][0] = AddHex(output[outputSize-1][0], "0004");}
+    if      (format2) { nextAddr = AddHex(output[outputSize][0], "0002");}
+    else if (format4) { nextAddr = AddHex(output[outputSize][0], "0004");}
+    else { nextAddr = AddHex(output[outputSize][0], "0003");}
     j++;
 
     // Load Symbol
@@ -377,19 +371,19 @@ void Disassembler::LoadOutput(int i, int current) {
     for (int k = 0; k < symTableSize; k++) {
 
         if (output[outputSize][0] == symTable[k][1]) {
-            output[outputSize][1] = symTable[k][1];
+            output[outputSize][1] = symTable[k][0];
             break;
         }
-        else { output[outputSize][1] = ""; }
+        else { output[outputSize][1] = " "; }
     }
     for (int k = 0; k < litTableSize; k++) {
         
-        if (output[outputSize][0] == litTable[k][1]) {
-            output[outputSize][1] = litTable[k][1];
+        if (output[outputSize][0] == litTable[k][3]) {
+            output[outputSize][1] = litTable[k][0];
             lit = true;
             break;
         }
-        else { output[outputSize][1] = ""; }
+        else { output[outputSize][1] = " "; }
     }
 
     // Load Operand
@@ -402,14 +396,24 @@ void Disassembler::LoadOutput(int i, int current) {
     }
     if (format4) { output[outputSize][2].insert(0, "+"); }
 
-    output[outputSize][3] = "";
-    output[outputSize][4] = "";
+    // Load TAS
+    cout << "\tLoad TAS" << endl;
+    output[outputSize][3] = "0";
+
+    // Load OPJ Code
+    cout << "\tLoad OPJ Code" << endl;
+    if(format2) { output[outputSize][4] = txtRecord[current].substr(0,4); }
+    else if (format4) { output[outputSize][4] = txtRecord[current].substr(0,8); }
+    else { output[outputSize][4] = txtRecord[current].substr(0,6); }
 
     if(format2) { txtRecord[current].erase(0,4); }
-    else if (format3) { txtRecord[current].erase(0,6); }
     else if (format4) { txtRecord[current].erase(0,8); }
+    else { txtRecord[current].erase(0,6); }
 
-    ResetFlags();
+    cout << "\tCurrent Ouput At Row: " << outputSize << endl;
+    cout << left << setw(12) << output[outputSize][0] << setw(12) << output[outputSize][1] << setw(12) << output[outputSize][2] << setw(12) << output[outputSize][3] << output[outputSize][4] << endl;
+    cout << "\tNew TXTRecord: " << txtRecord[current] << endl;
+
     outputSize++;
 }
 
@@ -422,14 +426,15 @@ string Disassembler::GrabInstruction(int current) {
 
     int i = 0;
     while (!ops[i].empty()) {
-        cout << "\t\t\tCheck i: " << i << endl;
         if (instrValue == HexToBin(ops[i].c_str())) {
+            cout << "\t\t\t\tFound" << endl;
             return mnemonics[i];
         }
         i++;
 
     }
-}
+    return "ERROR";
+};
 
 void Disassembler::ResetFlags() {
     
@@ -440,7 +445,7 @@ void Disassembler::ResetFlags() {
 	pc = false;
 	base = false;
 	format2 = false;
-	format3 = false;
+	format3 = true;
 	format4 = false;
 
 };

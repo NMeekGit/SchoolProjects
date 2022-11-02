@@ -49,6 +49,7 @@ class Disassembler {
     int* txtSize;
     int rowSize;
 
+    string nextAddr;
     string* txtRecord;
     string* txtStart;
     string* inputOBJ;
