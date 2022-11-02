@@ -468,7 +468,11 @@ void Disassembler::FinishOutput() {
         output[outputSize][0] = symTable[i][1];
         output[outputSize][1] = symTable[i][0];
         output[outputSize][2] = "RESB";
-        output[outputSize][3] = "0";
+        if (output[outputSize][1] != "TABLE" && output[outputSize][1] != "TABLE2") {
+            output[outputSize][3] = "3";
+        } else {
+            output[outputSize][3] = "6000";
+        }
         output[outputSize][4] = " ";
     }
 
