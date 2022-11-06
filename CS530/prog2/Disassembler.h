@@ -31,6 +31,7 @@ class Disassembler {
     static const string mnemonics[];
     static const string mnemonics2[];
     static const string directives[];
+    static const string specials[];
 
     bool format2;
     bool format3;
@@ -76,34 +77,34 @@ class Disassembler {
         Disassembler();                     // Constructor
         ~Disassembler();                    // Deconstructor
 
-        void OpenFile(int, string, string);         // Read in File
+        void OpenFile(int, string, string); // Read in File
         void PrintFile();                   // Output new file
 
-		void GrabHead();
+		void GrabHead();                    // Grab Head Record from input
         void GrabTXT();                     // Grab TXT Record from input
         void GrabSYM();                     // Grab SYM Table from input
         void GrabTXTInfo();                 // Grab TEXT Record Info
         
         void Solve();                       // Begin parsing
-        void LoadOutput(int, int);
-        void FinishOutput();
-        void FindFlags(int);                   // Find nixbpe
-        string GrabInstruction(int);             // Grab Instructions
-        string GrabSymbol(int);
+        void LoadOutput(int, int);          // Fills in outout[][]
+        void FinishOutput();                // Closes off output[][]
+        void FindFlags(int);                // Find nixbpe
+        string GrabInstruction(int);        // Grab Instructions
+        string GrabSymbol(int);             // Grab Symbols
 
-        void FillSYMTable(int);
-        void FillLITTable(int);
-        void ResetFlags();
-        void binMap(unordered_map<string,char>*);
+        void FillSYMTable(int);             // Fills a Symbol Table
+        void FillLITTable(int);             // Fills a Literal Table
+        void ResetFlags();                  // Resets Flags
+        void binMap(unordered_map<string,char>*); // Unordered Map of Binary to Hex
 
         int HexToDec(string);               // Convert string hexadecimal to decimal
 
-        string BinToHex(string);
-        string HexToBin(string);       // Convert string hex to uint
-        string MaskOP(string);             // Mask for Operand
-        string MaskFlag(string);           // Mask for Flags
-        string MaskREC(string);           // Mask for PC Record
-        string AddHex(string, string);
+        string BinToHex(string);            // Convert Binary to Hex
+        string HexToBin(string);            // Convert string hex to uint
+        string MaskOP(string);              // Mask for Operand
+        string MaskFlag(string);            // Mask for Flags
+        string MaskREC(string);             // Mask for PC Record
+        string AddHex(string, string);      // Add Two Hex Numbers
 };
 
 #endif

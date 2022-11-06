@@ -1,3 +1,14 @@
+/*
+ * Disassembler.cpp
+ *
+ * @author Noah Meeker
+ * Date: 11/2/2022
+ * RED ID: 821272563
+ *
+ * Couldn't tell you what I did. Got lost myself on a time crunch and my code turned into spagetti 
+ * real fast to try and grab as much points as possible. Welp always next time.
+ */
+
 #include "Disassembler.h"
 
 map<char, int> hex_dec(void) {
@@ -59,6 +70,10 @@ const string Disassembler::mnemonics2[] = {
 
 const string Disassembler::directives[] = {
     "START", "END", "BYTE", "WORD", "RESB", "RESW"
+};
+
+const string Disassembler::specials[] = {
+    "A","X","L","B","S","T","F","PC","SW"
 };
 
 int Disassembler::MAX_SIZE = 100;
@@ -310,7 +325,7 @@ void Disassembler::FillLITTable(int i) {
         litTable[litTableSize][0] = name;
         litTable[litTableSize][1] = lit;
         litTable[litTableSize][2] = len;
-        litTable[litTableSize][3] = addr;
+        litTable[litTableSize][3] = addr.substr(2,4);
         litTableSize++;
 
     }
@@ -321,7 +336,7 @@ void Disassembler::FillLITTable(int i) {
             litTable[litTableSize][0] = "";
             litTable[litTableSize][1] = lit;
             litTable[litTableSize][2] = len;
-            litTable[litTableSize][3] = addr;
+            litTable[litTableSize][3] = addr.substr(2,4);
             litTableSize++;
         }
     }
@@ -365,18 +380,26 @@ void Disassembler::LoadOutput(int i, int current) {
     int j = current;
     bool lit = false;
 
-    if (checkBase) {
-        string symbol;
-        output[outputSize][0] = " ";
-        output[outputSize][1] = " ";
-        output[outputSize][2] = "BASE";
-        if (output[outputSize-1][3].front() == '#' || output[outputSize-1][3].front() == '@')
-           symbol = output[outputSize-1][3].erase(0,1);
-        output[outputSize][3] = symbol;
-        output[outputSize][4] = " ";
-        outputSize++;
-        checkBase = false;
-        return;
+    /* if (checkBase) { */
+    /*     string symbol; */
+    /*     output[outputSize][0] = " "; */
+    /*     output[outputSize][1] = " "; */
+    /*     output[outputSize][2] = "BASE"; */
+    /*     if (output[outputSize-1][3].front() == '#' || output[outputSize-1][3].front() == '@') */
+    /*        symbol = output[outputSize-1][3].substr(1,output[outputSize-1][3].length()-1); */
+    /*     output[outputSize][3] = symbol; */
+    /*     output[outputSize][4] = " "; */
+    /*     outputSize++; */
+    /*     checkBase = false; */
+    /*     return; */
+    /* } */
+
+    // Check Format 2
+    for (int k = 0; !mnemonics2[k].empty(); k++) {
+        if (GrabInstruction(current) == mnemonics2[k]) {
+            cout << "\t\tFormat 2" << endl;
+            format2 = true;
+        }
     }
 
     // Load Memory Location
@@ -404,16 +427,21 @@ void Disassembler::LoadOutput(int i, int current) {
         
         if (output[outputSize][0] == litTable[k][3]) {
             output[outputSize][1] = litTable[k][0];
+            output[outputSize][3] = litTable[k][1];
+            output[outputSize][4] = litTable[k][1].substr(2, stoi(litTable[k][2]));
+            txtRecord[current].erase(0, stoi(litTable[k][2]));
+            nextAddr = AddHex(output[outputSize][0], "000" + to_string(stoi(litTable[k][2]) / 2));
             lit = true;
             break;
         }
-        else { output[outputSize][1] = " "; }
     }
 
     // Load Operand
     cout << "\tLoad Operand" << endl;
     if (lit) {
         output[outputSize][2] = "BYTE";
+        outputSize++;
+        return;
     }
     else {
         output[outputSize][2] = GrabInstruction(current);
@@ -427,20 +455,20 @@ void Disassembler::LoadOutput(int i, int current) {
 
     if (format4) { output[outputSize][2].insert(0, "+"); }
     
-    // Check Format 2
-    for (int k = 0; !mnemonics2[k].empty(); k++) {
-        if (output[outputSize][2] == mnemonics2[k]) {
-            cout << "\t\tFormat 2" << endl;
-            format2 = true;
-        }
-    }
 
     // Load TAS
     cout << "\tLoad TAS" << endl;
     output[outputSize][3] = "0";
+
+    if (format2) { output[outputSize][3] = specials[txtRecord[current].at(3) - '0']; }
+
+        // Search For Symbol
+    else {output[outputSize][3] = GrabSymbol(current);}
     
-    // Search For Symbol
-    output[outputSize][3] = GrabSymbol(current);
+    if (!indexed && !base && !pc && !format4 && immediate) {
+        output[outputSize][3] = to_string(HexToDec(txtRecord[current].substr(3,3)));
+    }
+
     if (indirect) { output[outputSize][3].insert(0, "@"); }
     else if (immediate) { output[outputSize][3].insert(0, "#"); }
     else if (indexed) { output[outputSize][3].append(",X"); }
@@ -460,6 +488,9 @@ void Disassembler::LoadOutput(int i, int current) {
     cout << "\tNew TXTRecord: " << txtRecord[current] << endl;
 
     outputSize++;
+
+    // Check For Symbol Input
+
 };
 
 void Disassembler::FinishOutput() {
