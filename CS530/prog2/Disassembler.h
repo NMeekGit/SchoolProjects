@@ -99,6 +99,7 @@ class Disassembler {
 
         int HexToDec(string);               // Convert string hexadecimal to decimal
 
+        string DecToHex(string);
         string BinToHex(string);            // Convert Binary to Hex
         string HexToBin(string);            // Convert string hex to uint
         string MaskOP(string);              // Mask for Operand

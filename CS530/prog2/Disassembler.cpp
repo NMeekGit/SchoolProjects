@@ -447,11 +447,6 @@ void Disassembler::LoadOutput(int i, int current) {
         output[outputSize][2] = GrabInstruction(current);
     }
 
-    if (output[outputSize][2] == "LDX") { indexAddr = output[outputSize][0]; }
-    else if (output[outputSize][2] == "LDB") { 
-        baseAddr = output[outputSize][0]; 
-        checkBase = true;
-    }
 
     if (format4) { output[outputSize][2].insert(0, "+"); }
     
@@ -460,13 +455,19 @@ void Disassembler::LoadOutput(int i, int current) {
     cout << "\tLoad TAS" << endl;
     output[outputSize][3] = "0";
 
-    if (format2) { output[outputSize][3] = specials[txtRecord[current].at(3) - '0']; }
+    if (format2) { output[outputSize][3] = specials[txtRecord[current].substr(0,4).back() - '0']; }
 
         // Search For Symbol
     else {output[outputSize][3] = GrabSymbol(current);}
     
     if (!indexed && !base && !pc && !format4 && immediate) {
         output[outputSize][3] = to_string(HexToDec(txtRecord[current].substr(3,3)));
+    }
+    
+    if (output[outputSize][2] == "LDX") { indexAddr = DecToHex(output[outputSize][3]); }
+    else if (output[outputSize][2] == "LDB") { 
+        baseAddr = output[outputSize][0]; 
+        checkBase = true;
     }
 
     if (indirect) { output[outputSize][3].insert(0, "@"); }
@@ -545,6 +546,7 @@ string Disassembler::GrabSymbol(int current) {
             pcAddr = AddHex(output[outputSize][0], "0003");
             record = AddHex(record, pcAddr);
             record = record.replace(0, 1, "0");
+            cout << "\t\t\trecord: " << record << endl;
         }
         else if (base) {
             record = AddHex(record, baseAddr);
@@ -555,22 +557,33 @@ string Disassembler::GrabSymbol(int current) {
         }
         else if (indexed) { 
             record = AddHex(record, indexAddr); 
-            moveIndex = true;
-            for (int i = 0; i < symTableSize; i++) {
-                if (record == symTable[i][1] && symTable[i][0].substr(0,5) == "TABLE") {
-                    indexAddr = AddHex(record, "1770");
-                }
-            }
+            /* moveIndex = true; */
+            /* for (int i = 0; i < symTableSize; i++) { */
+            /*     if (record == symTable[i][1] && symTable[i][0].substr(0,5) == "TABLE") { */
+            /*         indexAddr = AddHex(record, "1770"); */
+            /*     } */
+            /* } */
         }
 
         
     }
     
     for (int i = 0; i < symTableSize; i++) {
-        if (record == symTable[i][1]) { return symTable[i][0]; }
+        if (record == symTable[i][1]) { 
+            cout << "Returned Symbol" << endl;
+            return symTable[i][0];
+        }
     }
     for (int i = 0; i < litTableSize; i++) {
-        if (record == litTable[i][3]) { return litTable[i][1]; }
+        if (record == litTable[i][3]) { 
+            cout << "Returned Literal" << endl;
+            if (litTable[i][0] != "") {
+                return litTable[i][0]; 
+            }
+            else {
+                return litTable[i][1];
+            }
+        }
     }
 
 };
@@ -739,6 +752,28 @@ string Disassembler::MaskREC(string value) {
 		newValue += (char)(((mask[i] - '0') & (value[i] - '0')) + '0');
 	}
 	return newValue;
+};
+
+string Disassembler::DecToHex(string a) {
+
+    map<int, char> k = dec_hex();
+
+    int aLen = a.length();
+    int i,j;
+
+    string ans = "";
+
+    for (i = aLen - 1; i >= 0; i--) {
+
+        int num = a[i] - '0';
+        int addBit = k[num % 16];
+
+        ans.push_back(addBit);
+    }
+    
+    reverse(ans.begin(), ans.end());
+
+    return ans;
 };
 
 string Disassembler::AddHex(string a, string b) {
