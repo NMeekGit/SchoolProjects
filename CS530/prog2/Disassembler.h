@@ -44,6 +44,9 @@ class Disassembler {
     bool base;
     bool moveIndex;
     bool checkBase;
+    bool lit;
+    bool litorg;
+    bool literal;
 
     int inputSizeOBJ;
     int inputSizeSYM;
@@ -51,6 +54,7 @@ class Disassembler {
     int litTableSize;
     int txtRecordSize;
 	int outputSize;
+    int finalSize;
     int currSymLoc;
     int* txtSize;
     int rowSize;
@@ -66,6 +70,7 @@ class Disassembler {
     string** symTable;
     string** litTable;
     string** output;
+    string** finalOutput;
 
     ifstream fileOBJ;
     ofstream fileTXT;
@@ -88,9 +93,18 @@ class Disassembler {
         void Solve();                       // Begin parsing
         void LoadOutput(int, int);          // Fills in outout[][]
         void FinishOutput();                // Closes off output[][]
+        void FinalOutput();                 // Final Adjustments
         void FindFlags(int);                // Find nixbpe
+                                            
+        void LoadMemory(int, int);          // Load Memory
+        void LoadSymbol(int);               // Load Symbol
+        void LoadOperand(int);              // Load Operand
+        void LoadTAS(int);                  // Load TAS
+        void LoadOBJ(int);                  // Load OBJ
+
         string GrabInstruction(int);        // Grab Instructions
         string GrabSymbol(int);             // Grab Symbols
+        string GrabBase(int);               // Grab Base Address
 
         void FillSYMTable(int);             // Fills a Symbol Table
         void FillLITTable(int);             // Fills a Literal Table
