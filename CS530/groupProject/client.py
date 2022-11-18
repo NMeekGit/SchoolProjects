@@ -3,13 +3,7 @@ import socket
 HEADER = 64
 PORT = 5050
 FORMAT = 'utf-8'
-SERVER = "127.0.1.1"
-ADDR = (SERVER, PORT)
 DISCONNECT_MESSAGE = "!DISCONNECT"
-
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-client.connect(ADDR)
 
 def send(msg):
     message = msg.encode(FORMAT)
@@ -20,6 +14,14 @@ def send(msg):
     client.send(message)
 
 print("Hello Client")
+print("------------\n")
+print("Type IP of Server")
+SERVER = str(input())
+
+ADDR = (SERVER, PORT)
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(ADDR)
+
 print("------------\n")
 print("Please Enter Your Message")
 print(f">> To Disconnect, type {DISCONNECT_MESSAGE}")
