@@ -1,0 +1,7 @@
+<let>   ::= A | B | C | D | ... | X | Y | Z
+<int>   ::= 0 | 1 | 2 | ... | 8 | 9
+<op>    ::= and | or | nand | xor | xnor
+<dash>  ::= -
+<relop> ::= < | > | <= | >= | == | != | not
+<exp>   ::= <term> { <op> <term> }
+<term>  ::= <int> <dash> <int> | <relop> <int> | ( <exp> )
