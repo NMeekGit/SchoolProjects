@@ -77,55 +77,59 @@ class recDescent:
         
         self.lex()
         print(self.tokens)
-        i = 0
-        return self.EXP(self.tokens[0], i)
+        return self.EXP()
 
         # return False # replace with True if the expression is valid! 
 
     # TODO: Write your parsing procedures corresponding to the grammar rules - follow Figure 5.17
 
     # Check EXP
-    def EXP(self, token, i):
-        print(f"i {i}")
+    def EXP(self):
+        i = 0
         FOUND = False
-        print(self.tokens[i])
-        if (self.TERM(i)):
+        if (self.TERM()):
             FOUND = True
-            while (self.inOP(self.tokens[i]) and FOUND):
-                i += 1
-                if (not self.TERM(i)):
+            while (len(self.tokens) > 0 and self.inOP(self.tokens[i]) and FOUND):
+                popValue = self.tokens.pop(i)
+                print(popValue)
+                if (not self.TERM()):
                     FOUND = False
         
         return FOUND
     
-    def TERM(self, i):
+    def TERM(self):
+        i = 0
         FOUND = False
-        if (i < len(self.tokens) and self.tokens[i].isdigit()):
-            i += 1
+        if (len(self.tokens) > 0 and self.tokens[i].isdigit()):
             print("int")
-            if (i < len(self.tokens) and self.tokens[i] == '-'):
-                i += 1
+            popValue = self.tokens.pop(i)
+            print(popValue)
+            if (len(self.tokens) > 0 and self.tokens[i] == '-'):
                 print("dash")
-                if (i < len(self.tokens) and self.tokens[i].isdigit()):
-                    i += 1
+                popValue = self.tokens.pop(i)
+                print(popValue)
+                if (len(self.tokens) > 0 and self.tokens[i].isdigit()):
                     FOUND = True
                     print("int")
-        elif (i < len(self.tokens) and self.inRELOP(self.tokens[i])):
-            i += 1
+                    popValue = self.tokens.pop(i)
+                    print(popValue)
+        elif (len(self.tokens) > 0 and self.inRELOP(self.tokens[i])):
             print("relop")
-            if (i < len(self.tokens) and self.tokens[i].isdigit()):
-                i += 1
+            popValue = self.tokens.pop(i)
+            print(popValue)
+            if (len(self.tokens) > 0 and self.tokens[i].isdigit()):
                 FOUND = True
                 print("int")
-        elif (i < len(self.tokens) and self.tokens[i] == '('):
-            print("(")
-            i += 1
-            if (i < len(self.tokens) and self.EXP(self.tokens[i], i)):
-                print(f"EXP {self.tokens[i]}")
-                if (i < len(self.tokens) and self.tokens[i] == ')'):
-                    print(")")
+                popValue = self.tokens.pop(i)
+                print(popValue)
+        elif (len(self.tokens) > 0 and self.tokens[i] == '('):
+            popValue = self.tokens.pop(i)
+            print(popValue)
+            if (self.EXP()):
+                if (len(self.tokens) > 0 and self.tokens[i] == ')'):
+                    popValue = self.tokens.pop(i)
+                    print(popValue)
                     FOUND = True
-                    i += 1
         return FOUND
 
     def inOP(self, token):
