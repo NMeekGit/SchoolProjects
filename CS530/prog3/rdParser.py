@@ -77,67 +77,83 @@ class recDescent:
         
         self.lex()
         print(self.tokens)
-        return self.EXP()
+
+        # Begin main validation
+        # Return True if expression if true, False otherwise
+        return self.EXP(False) # Initial False pass for open parenthesis check
 
         # return False # replace with True if the expression is valid! 
 
     # TODO: Write your parsing procedures corresponding to the grammar rules - follow Figure 5.17
 
     # Check EXP
-    def EXP(self):
+    def EXP(self, checkEXP):
         i = 0
         FOUND = False
+
+        # Checks for 'TERM"
         if (self.TERM()):
             FOUND = True
+
+            # Checks for '{op TERM}'
             while (len(self.tokens) > 0 and self.inOP(self.tokens[i]) and FOUND):
                 popValue = self.tokens.pop(i)
                 print(popValue)
                 if (not self.TERM()):
                     FOUND = False
-        
+
+            if (len(self.tokens) > 0 and self.tokens[i] == ')' and not checkEXP): # Check for open parenthesis
+                FOUND = False
+
         return FOUND
     
+    # Check TERM
     def TERM(self):
         i = 0
         FOUND = False
+
+        # This series of IF statements check for 'int - int' validation
         if (len(self.tokens) > 0 and self.tokens[i].isdigit()):
-            print("int")
             popValue = self.tokens.pop(i)
-            print(popValue)
+            print(f"int {popValue}")
             if (len(self.tokens) > 0 and self.tokens[i] == '-'):
-                print("dash")
                 popValue = self.tokens.pop(i)
-                print(popValue)
+                print(f"dash {popValue}")
                 if (len(self.tokens) > 0 and self.tokens[i].isdigit()):
                     FOUND = True
-                    print("int")
                     popValue = self.tokens.pop(i)
-                    print(popValue)
+                    print(f"int {popValue}")
+
+        # This series of IF statements check for 'relop int' validation
         elif (len(self.tokens) > 0 and self.inRELOP(self.tokens[i])):
-            print("relop")
             popValue = self.tokens.pop(i)
-            print(popValue)
+            print(f"relop {popValue}")
             if (len(self.tokens) > 0 and self.tokens[i].isdigit()):
                 FOUND = True
-                print("int")
                 popValue = self.tokens.pop(i)
-                print(popValue)
+                print(f"int {popValue}")
+
+        # This series of IF statements check for '( EXP )' validation
         elif (len(self.tokens) > 0 and self.tokens[i] == '('):
             popValue = self.tokens.pop(i)
             print(popValue)
-            if (self.EXP()):
+            if (self.EXP(True)):
                 if (len(self.tokens) > 0 and self.tokens[i] == ')'):
                     popValue = self.tokens.pop(i)
                     print(popValue)
                     FOUND = True
+
+        # Return True if successful, False otherwise
         return FOUND
 
+    # Helper Function : Check if given token is a logical operator
     def inOP(self, token):
         for ii in self.op:
             if ii == token:
                 return True
         return False
 
+    # Helper Function : Check if given token is a relational operator
     def inRELOP(self, token):
         for ii in self.relop:
             if ii == token:
