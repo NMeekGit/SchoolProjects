@@ -1,0 +1,21 @@
+0000 TESTCS  START   0                         
+0000 FIRST   +LDB    #BVAR         691002B6    
+             BASE    BVAR                      
+0004         LDX     #AVAR         0522B0      
+0007         LDA     PVAR          032003      
+000A         LDT     @BVAR         7622A9      
+000D PVAR    RESB    1                         
+000E STORE   RESB    680                       
+02B6 BVAR    RESB    1                         
+02B7 AVAR    BYTE    X'94'         94          
+02B8 DEV     BYTE    X'44'         44          
+02B9         CLEAR   T             B450        
+02BB         LDX     #0            050000      
+02BE LOOP    TD      DEV           E32FF7      
+02C1         JEQ     LOOP          332FFA      
+02C4         LDCH    AVAR,X        53AFF0      
+02C7         WD      DEV           DF2FEE      
+02CA         LDX     CVAR          074BCF      
+02CD NEW     RESB    3000
+0E85 CVAR    BYTE    X'A5'         A5          
+             END     TESTCS                    
