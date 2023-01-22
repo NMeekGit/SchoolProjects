@@ -8,35 +8,6 @@
 
 #include "dictionary.h"
 
-char** grabWords(char* line) {
-    const int BUFFER_SIZE = 100;
-    char** array;
-    char* word;
-    char NULL_TERMINATOR = '\0';
-    
-    word = new char[BUFFER_SIZE];
-    array = new char*[BUFFER_SIZE];
-    for (int i = 0; i < BUFFER_SIZE; i++) {
-        *(array + i) = new char[BUFFER_SIZE];
-    }
-
-    int indexLine = 0;
-    for (int indexArray = 0; indexArray < BUFFER_SIZE; indexArray++) {
-        for (int indexWord = 0; indexWord < BUFFER_SIZE; indexWord++) {
-            if (*(line + indexLine) == NULL_TERMINATOR) {
-                *(word + indexWord) = *(line + indexLine);
-                indexLine++;
-                break;
-            }
-            *(word + indexWord) = *(line + indexLine);
-            indexLine++;
-        }
-        *(array + indexArray) = word;
-    }
-
-    return array;
-};
-
 int main(int argc, char **argv)
 {
     if (argc != 3) {
@@ -52,6 +23,7 @@ int main(int argc, char **argv)
     const char *delimiters = "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~";
     Dict dictionary;
     if (dictStream.is_open()) {
+        cout << "[Dictionary] Opening Vocab File\n" << endl;
         while (getline(dictStream, line)) {
 
             char* line_c = new char[line.length() + 1];
@@ -63,7 +35,7 @@ int main(int argc, char **argv)
                     cout << "***SYSTEM EXIT FAILURE***" << endl;
                     return EXIT_FAILURE;
                 }
-                word = strtok(NULL, delimiters);
+                word = nullptr;
             }
             delete[] line_c;
         }
@@ -78,16 +50,22 @@ int main(int argc, char **argv)
     dictNode* preffix;
 
     if (testStream.is_open()) {
+        cout << "[Test File] Opening Test File\n" << endl;
         while (getline(testStream, line)) {
             char* line_c = new char[line.length() + 1];
             strcpy(line_c, line.c_str());
             char* word = strtok(line_c, delimiters);
             while (word) {
                 preffix = dictionary.findEndingNodeOfStr(word);
-                if (preffix != nullptr) {
-                    string str = word;
+                int count = 0;
+                dictionary.countWordsStartingFromNode(preffix, count);
+                string str = word;
+                if (preffix != NULL) {
                     cout << "[Search] " + str + " Found" << endl;
+                } else {
+                    cout << "[Search] " + str + " Not Found" << endl;
                 }
+                cout << "[Count] " << count << endl;
                 word = strtok(NULL, delimiters);
             }
         }

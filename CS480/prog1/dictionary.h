@@ -27,7 +27,7 @@ public:
     bool add(const char*);
     dictNode* createDictNode();
     dictNode* findEndingNodeOfStr(const char*);
-    void countWordsStartingFromNode(int &);
+    void countWordsStartingFromNode(dictNode*, int&);
 };
 
 #endif

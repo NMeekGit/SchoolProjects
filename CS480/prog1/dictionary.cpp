@@ -73,13 +73,31 @@ dictNode* Dict::findEndingNodeOfStr(const char *strBeingSearched) {
         if (!temp->next[pos]) {
             return NULL;
         }
-        if (pos == NULL_TERMINATOR && !temp->next[pos]) {
+        else if (pos == NULL_TERMINATOR) {
             return temp;
         }
         temp = temp->next[pos];
     }
+    return temp;
 }
 
-void Dict::countWordsStartingFromNode(int &count) {
+void Dict::countWordsStartingFromNode(dictNode* node, int& count) {
+    dictNode* temp = node;
+    const int NULL_TERMINATOR = validCharacters.at('\0');
+    
+    if (!temp) {
+        return;
+    }
+
+    for (int index = 0; index < NCHILD; index++) {
+        
+        if (temp->next[index]) {
+            if (index == NULL_TERMINATOR) {
+                count++;
+                return;
+            }
+            countWordsStartingFromNode(temp->next[index], count);
+        }
+    }
 
 }
