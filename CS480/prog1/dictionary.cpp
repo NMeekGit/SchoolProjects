@@ -1,6 +1,6 @@
-#include "countprefix.h"
+#include "dictionary.h"
 
-CountPrefix::map<char, int> validCharacters{ {'a' , 0}, {'A' , 0},
+const map<char, int> Dict::validCharacters{ {'a' , 0}, {'A' , 0},
                                             {'b' , 1}, {'B' , 1},
                                             {'c' , 2}, {'C' , 2},
                                             {'d' , 3}, {'D' , 3},
@@ -29,4 +29,45 @@ CountPrefix::map<char, int> validCharacters{ {'a' , 0}, {'A' , 0},
                                             {'\'' , 26}, {'-' , 27},
                                             {'_' , 28}, {'\0' , 29}};
                             
+Dict::Dict() {
+    this->root = new dictNode;
+}
 
+dictNode* Dict::createDictNode() {
+    dictNode* node = (dictNode*) calloc (1, sizeof(dictNode));
+    for (int index = 0; index < NCHILD; index++) {
+        node->next[index] = NULL;
+    }
+    return node;
+}
+
+bool Dict::add(const char *wordBeingInserted = nullptr) {
+    dictNode* temp = this->root;
+
+    if (wordBeingInserted == nullptr) {
+        return false;
+    }
+
+    for (unsigned int index = 0; index < strlen(wordBeingInserted); ++index) {
+
+        cout << *(wordBeingInserted + index) << ",";
+        char c = *(wordBeingInserted + index);
+        int pos = validCharacters.at(c);
+
+        if (!temp->next[pos]) {
+            temp->next[pos] = createDictNode();
+        }
+        temp = temp->next[pos];
+    }
+    cout << "" << endl;
+    return true;
+
+}
+
+dictNode* Dict::findEndingNodeOfStr(const char *strBeingSearched) {
+
+}
+
+void Dict::countWordsStartingFromNode(int &count) {
+
+}
