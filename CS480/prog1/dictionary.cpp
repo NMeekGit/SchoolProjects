@@ -50,7 +50,6 @@ bool Dict::add(const char *wordBeingInserted = nullptr) {
 
     for (unsigned int index = 0; index < strlen(wordBeingInserted); ++index) {
 
-        cout << *(wordBeingInserted + index) << ",";
         char c = *(wordBeingInserted + index);
         int pos = validCharacters.at(c);
 
@@ -59,13 +58,26 @@ bool Dict::add(const char *wordBeingInserted = nullptr) {
         }
         temp = temp->next[pos];
     }
-    cout << "" << endl;
     return true;
 
 }
 
 dictNode* Dict::findEndingNodeOfStr(const char *strBeingSearched) {
+    dictNode* temp = this->root;
+    const int NULL_TERMINATOR = validCharacters.at('\0');
 
+    for (unsigned int index = 0; index < strlen(strBeingSearched); ++index) {
+        char c = *(strBeingSearched + index);
+        int pos = validCharacters.at(c);
+
+        if (!temp->next[pos]) {
+            return NULL;
+        }
+        if (pos == NULL_TERMINATOR && !temp->next[pos]) {
+            return temp;
+        }
+        temp = temp->next[pos];
+    }
 }
 
 void Dict::countWordsStartingFromNode(int &count) {
