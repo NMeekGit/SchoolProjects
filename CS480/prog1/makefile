@@ -8,10 +8,10 @@
 CC=g++
 CFLAGS=-Wall -std=c++11 -g3 -c
 
-countprefix: driver.o countprefix.o
+countprefix: driver.o dictionary.o
 	$(CC) -o countprefix $^
 
-countprefix.o: countprefix.cpp
+dictionary.o: dictionary.cpp
 	$(CC) $(CFLAGS) $^
 
 driver.0: driver.cpp
