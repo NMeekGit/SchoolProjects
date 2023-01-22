@@ -11,10 +11,11 @@
 
 using namespace std;
 
-class CountPre {
+class CountPrefix {
     
 public:
-    CountPre();
+    map<char, int> validCharacters;
+    CountPrefix();
 };
 
 #endif
