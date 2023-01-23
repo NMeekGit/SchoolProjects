@@ -66,19 +66,19 @@ dictNode* Dict::findEndingNodeOfStr(const char *strBeingSearched) {
     dictNode* temp = this->root;
     const int NULL_TERMINATOR = validCharacters.at('\0');
 
-    for (unsigned int index = 0; index < strlen(strBeingSearched); ++index) {
+    for (int index = 0; *(strBeingSearched + index) != '\0'; ++index) {
         char c = *(strBeingSearched + index);
         int pos = validCharacters.at(c);
 
         if (!temp->next[pos]) {
             return NULL;
         }
-        else if (pos == NULL_TERMINATOR) {
-            return temp;
-        }
         temp = temp->next[pos];
     }
-    return temp;
+    if (temp) {
+        return temp;
+    }
+    return NULL;
 }
 
 void Dict::countWordsStartingFromNode(dictNode* node, int& count) {
@@ -92,6 +92,7 @@ void Dict::countWordsStartingFromNode(dictNode* node, int& count) {
     for (int index = 0; index < NCHILD; index++) {
         
         if (temp->next[index]) {
+            /* cout << "index: " << index << endl; */
             if (index == NULL_TERMINATOR) {
                 count++;
                 return;

@@ -56,6 +56,10 @@ int main(int argc, char **argv)
             strcpy(line_c, line.c_str());
             char* word = strtok(line_c, delimiters);
             while (word) {
+                for (int i = 0; i < strlen(word); i++) {
+                    cout << word[i] << ",";
+                }
+                cout << "" << endl;
                 preffix = dictionary.findEndingNodeOfStr(word);
                 int count = 0;
                 dictionary.countWordsStartingFromNode(preffix, count);
