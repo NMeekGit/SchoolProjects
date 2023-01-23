@@ -93,11 +93,11 @@ void Dict::countWordsStartingFromNode(dictNode* node, int& count) {
         
         if (temp->next[index]) {
             /* cout << "index: " << index << endl; */
-            if (index == NULL_TERMINATOR) {
-                count++;
-                return;
+            if (index != NULL_TERMINATOR) {
+                countWordsStartingFromNode(temp->next[index], count);
             }
-            countWordsStartingFromNode(temp->next[index], count);
+            count++;
+            return;
         }
     }
 
