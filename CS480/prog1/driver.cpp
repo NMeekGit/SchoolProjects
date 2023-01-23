@@ -11,9 +11,9 @@
 int main(int argc, char **argv)
 {
     if (argc != 3) {
-        cout << "[ERROR] Code requires two parameters" << endl;
-        cout << "   ex: ./{program} {vocab list}.txt {test file}.txt\n" << endl;
-        cout << "***SYSTEM EXIT FAILURE***" << endl;
+        /* cout << "[ERROR] Code requires two parameters" << endl; */
+        /* cout << "   ex: ./{program} {vocab list}.txt {test file}.txt\n" << endl; */
+        /* cout << "***SYSTEM EXIT FAILURE***" << endl; */
         return EXIT_FAILURE;
     }
 
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     const char *delimiters = "\n\r !\"#$%&()*+,./0123456789:;<=>?@[\\]^`{|}~";
     Dict dictionary;
     if (dictStream.is_open()) {
-        cout << "[Dictionary] Opening Vocab File\n" << endl;
+        /* cout << "[Dictionary] Opening Vocab File\n" << endl; */
         while (getline(dictStream, line)) {
 
             char* line_c = new char[line.length() + 1];
@@ -31,26 +31,25 @@ int main(int argc, char **argv)
             char *word = strtok(line_c, delimiters);
             while (word) {
                 if (!dictionary.add(word)) {
-                    cout << "[ERROR] Word Not Entered\n" << endl;
-                    cout << "***SYSTEM EXIT FAILURE***" << endl;
+                    /* cout << "[ERROR] Word Not Entered\n" << endl; */
+                    /* cout << "***SYSTEM EXIT FAILURE***" << endl; */
                     return EXIT_FAILURE;
                 }
                 word = nullptr;
             }
             delete[] line_c;
         }
-            cout << "[Dictionary] Filling of Dictionary Completed\n" << endl;
+            /* cout << "[Dictionary] Filling of Dictionary Completed\n" << endl; */
     }
 
     dictStream.close();
 
     string TEST_FILE = argv[2];
     ifstream testStream (TEST_FILE);
-    ofstream output ("testoutput.txt");
     dictNode* preffix;
 
     if (testStream.is_open()) {
-        cout << "[Test File] Opening Test File\n" << endl;
+        /* cout << "[Test File] Opening Test File\n" << endl; */
         while (getline(testStream, line)) {
             char* line_c = new char[line.length() + 1];
             strcpy(line_c, line.c_str());
@@ -69,17 +68,16 @@ int main(int argc, char **argv)
                 /* } else { */
                 /*     cout << "[Search] " + str + " Not Found" << endl; */
                 /* } */
-                output << str << " " << count << endl;
+                cout << str << " " << count << endl;
                 word = strtok(NULL, delimiters);
             }
         }
-        cout << "[Test File] Closing Test File\n" << endl;
+        /* cout << "[Test File] Closing Test File\n" << endl; */
     }
 
     testStream.close();
-    output.close();
 
-    cout << "***SYSTEM EXIT SUCCESS***" << endl;
+    /* cout << "***SYSTEM EXIT SUCCESS***" << endl; */
     return EXIT_SUCCESS;
 };
 
