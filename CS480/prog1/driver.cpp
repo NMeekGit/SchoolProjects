@@ -56,23 +56,24 @@ int main(int argc, char **argv)
             strcpy(line_c, line.c_str());
             char* word = strtok(line_c, delimiters);
             while (word) {
-                for (int i = 0; i < strlen(word); i++) {
-                    cout << word[i] << ",";
-                }
-                cout << "" << endl;
+                /* for (int i = 0; i < strlen(word); i++) { */
+                /*     cout << word[i] << ","; */
+                /* } */
+                /* cout << "" << endl; */
                 preffix = dictionary.findEndingNodeOfStr(word);
                 int count = 0;
                 dictionary.countWordsStartingFromNode(preffix, count);
                 string str = word;
-                if (preffix != NULL) {
-                    cout << "[Search] " + str + " Found" << endl;
-                } else {
-                    cout << "[Search] " + str + " Not Found" << endl;
-                }
-                cout << "[Count] " << count << endl;
+                /* if (preffix != NULL) { */
+                /*     cout << "[Search] " + str + " Found" << endl; */
+                /* } else { */
+                /*     cout << "[Search] " + str + " Not Found" << endl; */
+                /* } */
+                output << str << " " << count << endl;
                 word = strtok(NULL, delimiters);
             }
         }
+        cout << "[Test File] Closing Test File\n" << endl;
     }
 
     testStream.close();

@@ -15,6 +15,7 @@ using namespace std;
 const int NCHILD = 30;
 struct dictNode {
     array<dictNode*, NCHILD> next = {};
+    char character;
 };
 
 class Dict{

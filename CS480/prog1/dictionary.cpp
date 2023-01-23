@@ -35,6 +35,7 @@ Dict::Dict() {
 
 dictNode* Dict::createDictNode() {
     dictNode* node = (dictNode*) calloc (1, sizeof(dictNode));
+    node->character = ' ';
     for (int index = 0; index < NCHILD; index++) {
         node->next[index] = NULL;
     }
@@ -43,30 +44,34 @@ dictNode* Dict::createDictNode() {
 
 bool Dict::add(const char *wordBeingInserted = nullptr) {
     dictNode* temp = this->root;
+    const int NULL_CHAR = validCharacters.at('\0');
 
     if (wordBeingInserted == nullptr) {
         return false;
     }
 
-    for (unsigned int index = 0; index < strlen(wordBeingInserted); ++index) {
+    for (unsigned int index = 0; *(wordBeingInserted + index) != '\0'; ++index) {
 
         char c = *(wordBeingInserted + index);
         int pos = validCharacters.at(c);
-
         if (!temp->next[pos]) {
             temp->next[pos] = createDictNode();
+            temp->next[pos]->character = c;
         }
         temp = temp->next[pos];
+
     }
+
+    temp->next[NULL_CHAR] = createDictNode();
     return true;
 
 }
 
 dictNode* Dict::findEndingNodeOfStr(const char *strBeingSearched) {
     dictNode* temp = this->root;
-    const int NULL_TERMINATOR = validCharacters.at('\0');
+    const char NULL_TERMINATOR = '\0';
 
-    for (int index = 0; *(strBeingSearched + index) != '\0'; ++index) {
+    for (int index = 0; *(strBeingSearched + index) != NULL_TERMINATOR; ++index) {
         char c = *(strBeingSearched + index);
         int pos = validCharacters.at(c);
 
@@ -82,22 +87,20 @@ dictNode* Dict::findEndingNodeOfStr(const char *strBeingSearched) {
 }
 
 void Dict::countWordsStartingFromNode(dictNode* node, int& count) {
-    dictNode* temp = node;
-    const int NULL_TERMINATOR = validCharacters.at('\0');
-    
-    if (!temp) {
+    const int NULL_CHAR = validCharacters.at('\0');
+
+    if (!node) {
         return;
+    }
+
+    if (node->next[NULL_CHAR]) {
+        count++;
     }
 
     for (int index = 0; index < NCHILD; index++) {
         
-        if (temp->next[index]) {
-            /* cout << "index: " << index << endl; */
-            if (index != NULL_TERMINATOR) {
-                countWordsStartingFromNode(temp->next[index], count);
-            }
-            count++;
-            return;
+        if (node->next[index]) {
+            countWordsStartingFromNode(node->next[index], count);
         }
     }
 
