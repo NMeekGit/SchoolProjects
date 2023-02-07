@@ -1,39 +1,71 @@
+/* 
+ * CS 420 | Lab 1
+ *
+ * bitmanipulation.c
+ *
+ * @author: Noah Meeker
+ * @REDID: 821272563
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
-void DecToBin(int* arr, int* val, int* size);
+// Header Declaration
+void DecToBin(int* arr, unsigned long long* val, int* size);
 void OneComp(int* arr, int* size);
 void TwoComp(int* arr, int* size);
 void PrintBin(int* arr, int* size);
 
-int main(int argc, char *argv[])
-{
+unsigned long long* pow_base2(int* exp);
+
+
+
+
+int main(int argc, char *argv[]) {
 
     int* arr;
-    int* val = (int*)malloc(sizeof(int));
+    unsigned long long* val = (unsigned long long*)malloc(sizeof(unsigned long long));
     int* size = (int*)malloc(sizeof(int));
+
 
     printf("CS 420: Lab 1\n");
     printf("-------------\n");
     printf("Bit Manipulation\n\n");
     
-    printf("Input Decimal Number: ");
-    scanf("%d", *&val);
+    printf("Input Number: ");
+    
+    // Check Integer Validation
+    if (scanf("%llu", *&val) != 1) {
+        printf("[ERROR] Incorrect Input. Must Be A Number\n");
+        return 1;
+    }
     printf("\n");
 
     printf("Input Bit Size: ");
-    scanf("%d", *&size);
+
+    // Check Integer Validation
+    if (scanf("%d", *&size) != 1) {
+        printf("[ERROR] Incorrect Input. Must Be A Number\n");
+        return 1;
+    }
     printf("\n");
 
-    /* if (*val > (2 << *size)) { */
-    /*     printf("[ERROR] Decimal Number does not fit desired bit system\n"); */
-    /*     return 1; */
-    /* } */
+    // First *size in the below expression is for the case when *size is 0
+    if (!(*size && !(*size & (*size - 1)))) {
+        printf("[ERROR] Desired bit size %d is invalid. Try 4/8/16/32/64\n", *size);
+        return 1;
+    }
 
-    printf("Number: %d\n", *val);
+    if (*val/2 >= *(pow_base2(size))/2) {
+        printf("[ERROR] Number %llu does not fit in desired bit system %d.\n", *val, *size);
+        return 1;
+    }
+
+    printf("Number: %llu\n", *val);
     printf("Bit System: %d\n", *size);
 
-    arr = (int*)malloc(sizeof(int) * *size);
+    arr = (int*)malloc(sizeof(int) * *size); // Allocate array to bit system size
 
     DecToBin(arr, val, size);
 
@@ -47,10 +79,15 @@ int main(int argc, char *argv[])
 
     PrintBin(arr, size);
 
+    free(val);
+    free(size);
+    free(arr);
+
     return 0;
 }
 
-void DecToBin(int* arr, int* val, int* size) {
+/* Convert Decimal to Binary */
+void DecToBin(int* arr, unsigned long long* val, int* size) {
 
     int* arr_index = arr;
     int* arr_end = arr + *size;
@@ -59,11 +96,13 @@ void DecToBin(int* arr, int* val, int* size) {
 
         if (*val > 0) {
 
+            // Add remainder to array
             *arr_index = *val % 2;
             *val = *val / 2;
 
         } else {
 
+            // Pad out the rest of the array with 0's
             *arr_index = 0;
 
         }
@@ -72,6 +111,7 @@ void DecToBin(int* arr, int* val, int* size) {
     }
 }
 
+/* Perform One's Compliment */
 void OneComp(int* arr, int* size) {
 
     int* arr_index = arr;
@@ -79,6 +119,7 @@ void OneComp(int* arr, int* size) {
 
     while (arr_index < arr_end) {
 
+        // Check value and flip
         switch (*arr_index) {
             case 0:
                 *arr_index = 1;
@@ -93,6 +134,7 @@ void OneComp(int* arr, int* size) {
 
 }
 
+/* Perform Two's Compliment */
 void TwoComp(int* arr, int* size) {
 
     int* arr_index = arr;
@@ -113,8 +155,11 @@ void TwoComp(int* arr, int* size) {
 
         arr_index += 1;
     }
+
+    free(carry);
 }
 
+/* Print Method */
 void PrintBin(int* arr, int* size) {
 
     int* arr_start = arr;
@@ -127,4 +172,25 @@ void PrintBin(int* arr, int* size) {
 
     }
     printf("\n");
+}
+
+unsigned long long* pow_base2(int* exp) {
+
+    int* temp = (int*)malloc(sizeof(int));
+    int* base = (int*)malloc(sizeof(int));
+    unsigned long long* sum = (unsigned long long*)malloc(sizeof(unsigned long long));
+    *temp = *exp - 1;
+    *base = 2;
+    *sum = 1;
+
+    while (*temp > 0) {
+
+        *sum = *sum * (unsigned long long)(*base);
+        *temp -= 1;
+    }
+
+    free(temp);
+    free(base);
+    return sum;
+
 }
