@@ -28,7 +28,6 @@ int main(int argc, char *argv[]) {
     unsigned long long* val = (unsigned long long*)malloc(sizeof(unsigned long long));
     int* size = (int*)malloc(sizeof(int));
 
-
     printf("CS 420: Lab 1\n");
     printf("-------------\n");
     printf("Bit Manipulation\n\n");
@@ -42,7 +41,7 @@ int main(int argc, char *argv[]) {
     }
     printf("\n");
 
-    printf("Input Bit Size: ");
+    printf("Input Bit Size: (ie. 4/8/16/32/64) ");
 
     // Check Integer Validation
     if (scanf("%d", *&size) != 1) {
@@ -53,7 +52,7 @@ int main(int argc, char *argv[]) {
 
     // First *size in the below expression is for the case when *size is 0
     if (!(*size && !(*size & (*size - 1)))) {
-        printf("[ERROR] Desired bit size %d is invalid. Try 4/8/16/32/64\n", *size);
+        printf("[ERROR] Desired bit size %d is invalid. \n", *size);
         return 1;
     }
 
@@ -69,15 +68,20 @@ int main(int argc, char *argv[]) {
 
     DecToBin(arr, val, size);
 
+    printf("Number in Binary: ");
     PrintBin(arr, size);
 
     OneComp(arr, size);
 
+    printf("Number in One's Compliment: ");
     PrintBin(arr, size);
 
     TwoComp(arr, size);
 
+    printf("Number in Two's Compliment: ");
     PrintBin(arr, size);
+
+    printf("\nGood Bye\n");
 
     free(val);
     free(size);
