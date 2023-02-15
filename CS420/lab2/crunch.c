@@ -3,6 +3,7 @@
 #include <time.h>
 
 void help();
+char* splitString(char*, const char*);
 
 #define FILE_ARG '<'
 #define DASH_ARG '-' 
@@ -21,10 +22,10 @@ int main(int argc, char **argv)
     int count = 1;
     int space = 0;
     
-    if (argc == 1) {
-        help();
-        return 1;
-    }
+    /* if (argc == 1) { */
+    /*     help(); */
+    /*     return 1; */
+    /* } */
 
     int index;
     for (index = 1; index < argc; index++) {
@@ -48,15 +49,38 @@ int main(int argc, char **argv)
                     break;
             }
         }
-
-        if (argv[index][0] == FILE_ARG) {
-            printf("File Given\n");
-        }
             
     }
+
     printf("Degree: %d, Size: %d, Count: %d, Space: %d\n", degree, size, count, space);
 
+
+    while ( !feof(stdin) ) {
+
+        int index = 0;
+        char* string = (char*)malloc(20 * sizeof(char));
+        char* word;
+
+        fgets(string, sizeof(string), stdin);
+        word = splitString(string, " ");
+
+    }
+
     return 0;
+}
+
+char* splitString(char* string, const char* delim) {
+    
+    char* string_index = string;
+
+    while (string) {
+
+        if (*string_index == *delim) {
+            string = 
+            return (string_index -1) - string;
+        }
+        string_index++;
+    return NULL;
 }
 
 void help() {
