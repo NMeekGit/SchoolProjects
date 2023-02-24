@@ -3,14 +3,15 @@
 #include <time.h>
 
 void help();
-char* splitString(char*, const char*);
+void splitString(char**, char*, const char*);
+void printOutput(char**, int, int, int, int);
 
-#define FILE_ARG '<'
 #define DASH_ARG '-' 
 #define DEGREE_ARG 'd' 
 #define SIZE_ARG 'm' 
 #define COUNT_ARG 'n'
 #define SPACE_ARG 's'
+#define BUFF_SIZE 100
 
 int main(int argc, char **argv)
 {
@@ -54,33 +55,68 @@ int main(int argc, char **argv)
 
     printf("Degree: %d, Size: %d, Count: %d, Space: %d\n", degree, size, count, space);
 
+    int i;
+    char* string = (char*)malloc(BUFF_SIZE * sizeof(char));
+    char** words = (char**)malloc(BUFF_SIZE * sizeof(char));
+    for (i = 0; i < BUFF_SIZE; i++) {
+        words[i] = (char*)malloc(BUFF_SIZE * sizeof(char));
+    }
 
     while ( !feof(stdin) ) {
 
-        int index = 0;
-        char* string = (char*)malloc(20 * sizeof(char));
-        char* word;
-
         fgets(string, sizeof(string), stdin);
-        word = splitString(string, " ");
+        splitString(words, string, " ");
 
     }
 
+    printOutput(words, degree, size, count, space);
+    
+    free(string);
+    free(words);
     return 0;
 }
 
-char* splitString(char* string, const char* delim) {
+void splitString(char** words, char* string, const char* delim) {
     
+    char** array = words;
     char* string_index = string;
+    int i, j;
 
-    while (string) {
+    for (i = 0; i < BUFF_SIZE; i++) {
 
-        if (*string_index == *delim) {
-            string = 
-            return (string_index -1) - string;
+        for (j = 0; j < BUFF_SIZE; j++) {
+
+            if (!*string_index) {
+                return;
+            }
+
+            if (*string_index != *delim) {
+                array[i][j] = *string_index;
+            } else {
+                break;
+            }
+
+            string_index++;
         }
-        string_index++;
-    return NULL;
+    }
+}
+
+void printOutput(char** words, int degree, int size, int count, int space) {
+
+    char** array = words;
+    int i, j;
+
+    for (i = 0; i < sizeof(array); i++) {
+
+        for (j = 0; j < sizeof(array[i]); j++) {
+            printf("%c", array[i][j]);
+        }
+
+        if (space == 1) {
+            printf(" ");
+        }
+    }
+    
 }
 
 void help() {
