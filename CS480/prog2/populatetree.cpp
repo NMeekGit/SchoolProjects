@@ -32,8 +32,8 @@ void * populatetree (void *voidPtr) {
 
     dictStream.close();
     
-
-    pthread_exit();
+    shared->taskCompleted[DICTSRCFILEINDEX] = true;
+    pthread_exit(0);
 }
 
 /* Helper Method 

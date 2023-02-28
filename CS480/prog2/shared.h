@@ -1,3 +1,6 @@
+#ifndef SHARED_H
+#define SHARED_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -21,7 +24,7 @@
 
 typedef struct dictNode {
     struct dictNode* next[NCHILD]; // a-z,',-,_,NULL_CHAR
-}
+};
 
 typedef struct SHARED_DATA {
 
@@ -97,6 +100,6 @@ typedef struct SHARED_DATA {
      *  - boolean flag to indicate whether the readprefix thread has completed the task
      */
     bool taskCompleted[NUMOFFILES];
-}
+};
 
 #endif

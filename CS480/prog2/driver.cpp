@@ -17,6 +17,9 @@ int main (int argc, char** argv) {
     int option;
     int idx;
     int count;
+    int hashInterval = DEFAULT_HASH_MARK_INTERVAL;
+    int numOfMarks = DEFAULT_NUM_OF_MARKS;
+    int minNumForPrint = DEFAULT_MIN_NUM_OF_WORDS_WITH_A_PREFIX;
     string vocabFile;
     string testFile;
 
@@ -32,24 +35,16 @@ int main (int argc, char** argv) {
 
         switch (option) {
             case 'p':
-                /*! TODO: Logic for -p arguement
-                    *  \todo 
-                    */
+                numOfMarks = optarg;
                 break;
             case 'h':
-                /*! TODO: Logic for -h arguement
-                 *  \todo 
-                 */
+                hashInterval = optarg;
                 break;
             case 'n':
-                /*! TODO: Logic for -n arguement
-                 *  \todo 
-                 */
+                minNumForPrint = optarg;
                 break;
             default:
-                /*! TODO: Print something
-                 *  \todo 
-                 */
+                cout << "no args" << endl;
                 exit(2);
         }
     }
@@ -73,7 +68,15 @@ int main (int argc, char** argv) {
         idx ++;
     }
 
-    SHARED_DATA sharedData;
+    SHARED_DATA *sharedData = (SHARED_DATA*)malloc(sizeof(SHARED_DATA));
+
+    sharedData->root = createDictNode();
+    sharedData->numOfProgressMarks = numOfMarks;
+    sharedData->hashmarkInterval = hashInterval;
+    sharedData->minNumOfWordsWithAPrefixForPrinting = minNumForPrint;
+    sharedData->taskCompleted[DICTSRCFILEINDEX] = verbose;
+    sharedData->taskCompleted[TESTFILEINDEX] = verbose;
+
 
     /*! TODO: initializez the sharedData, maybe with a helper
      *  \todo 
@@ -117,20 +120,28 @@ int main (int argc, char** argv) {
 
     /* populatetree thread progress bar */
     count = 0;
-    while ((double)numOfCharsProcessedFromFile[DICTSRCFILEINDEX] / 
-            (double)totalNumOfCharsInFile[DICTSRCFILEINDEX] != 1) {
-        
-        double percent = (double)numOfCharsProcessedFromFile[DICTSRCFILEINDEX] / 
-            (double)totalNumOfCharsInFile[DICTSRCFILEINDEX];
+    double step = 1/sharedData->numOfProgressMarks;
+    double currentStep = step;
 
-        if (percent / shared-> == 0)
-           if (count == hashmarkInterval) {
-               cout << "#";
-           } else {
-               cout << "-";
-           }
+    
+    while (!sharedData->taskCompleted[DICTSRCFILEINDEX]) {
+
+        double percent = ((double)sharedData->numOfCharsReadFromFile[DICTSRCFILEINDEX] / (double)sharedData->totalNumOfCharsInFile[DICTSRCFILEINDEX]) * 100;
+        
+        if (percent >= currentStep) {
+            if (count == sharedData->hashmarkInterval) {
+                cout << "#";
+            } else {
+                cout << "-";
+            }
+            count++;
+            currentStep += step;
+        }
     }
-    cout << "\n There are " << wordCountInFile[DICTSRCFILEINDEX] << " words in vocabulary.txt." << endl;
+
+    double percent = ((double)sharedData->numOfCharsReadFromFile[DICTSRCFILEINDEX] / (double)sharedData->totalNumOfCharsInFile[DICTSRCFILEINDEX]) * 100;
+    }
+    cout << "\n There are " << sharedData->wordCountInFile[DICTSRCFILEINDEX] << " words in vocabulary.txt." << endl;
 
 
 }
