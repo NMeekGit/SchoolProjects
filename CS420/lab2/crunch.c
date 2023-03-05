@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <windows.h>
+#include <unistd.h>
 
 void help();
 void splitString(char**, char*, const char*);
@@ -23,11 +25,6 @@ int main(int argc, char **argv)
     int count = 1;
     int space = 0;
     
-    /* if (argc == 1) { */
-    /*     help(); */
-    /*     return 1; */
-    /* } */
-
     int index;
     for (index = 1; index < argc; index++) {
         
