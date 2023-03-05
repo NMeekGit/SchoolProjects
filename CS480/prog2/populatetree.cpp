@@ -1,25 +1,38 @@
+/*
+ * POPULATETREE.CPP
+ *
+ * @author: Noah Meeker
+ * @Red ID: 821272563
+ * @Class: CS 480
+ *
+ * Implementation file for the PopulateTree Thread in the program countprefix
+ */
 #include <stdio.h>
 #include <pthread.h>
 #include "shared.h"
 #include "populatetree.h"
-#include "dictionary.h"
 
 void * populatetree (void *voidPtr) {
 
+    /* Set the shared data to a variable for late use */
     SHARED_DATA *shared = (SHARED_DATA *)voidPtr;
 
+    /* Checked if there is shared data */
     if (shared == NULL)
         return NULL;
 
-    /* Opening Vocabulary File */
+    /* Open Vocab File */
     ifstream dictStream (shared->filePath[DICTSRCFILEINDEX]);
+    string line;
+
+    /* Check if file is open */
     if (dictStream.is_open()) {
         while (getline(dictStream, line)) {
             char* line_c = new char[line.length() + 1];
             strcpy(line_c, line.c_str());
-            char *word = strtok(line_c, delimiters);
+            char *word = strtok(line_c, shared->separators);
             while (word) {
-                if (!add(word)) {
+                if (!add(word, shared)) {
 
                     // If word from vocabulary file could not be added to the dictionary
                     return NULL;
@@ -32,7 +45,9 @@ void * populatetree (void *voidPtr) {
 
     dictStream.close();
     
+    /* mark completion of current task */
     shared->taskCompleted[DICTSRCFILEINDEX] = true;
+
     pthread_exit(0);
 }
 
@@ -56,9 +71,8 @@ dictNode* createDictNode() {
  *  return true if word is successfully inserted
  *  return false if unsuccessful
  */
-bool add(const char *wordBeingInserted = nullptr) {
-    dictNode* temp = this->root;
-    const int NULL_POS = shared->validCharacters.at(NULL_CHAR);
+bool add(const char *wordBeingInserted = nullptr, SHARED_DATA *shared = NULL) {
+    dictNode* temp = shared->root;
 
     if (wordBeingInserted == nullptr) {
 
@@ -68,6 +82,7 @@ bool add(const char *wordBeingInserted = nullptr) {
 
     for (unsigned int index = 0; *(wordBeingInserted + index) != NULL_CHAR; ++index) {
 
+        shared->numOfCharsReadFromFile[DICTSRCFILEINDEX]++;
         char c = *(wordBeingInserted + index);
         int pos = shared->validCharacters.at(c);
         if (!temp->next[pos]) {
@@ -76,7 +91,6 @@ bool add(const char *wordBeingInserted = nullptr) {
             temp->next[pos] = createDictNode();
         }
         temp = temp->next[pos];
-        shared->numOfCharsProcessedFromFile[DICTSRCFILEINDEX]++;
 
     }
 
@@ -85,6 +99,7 @@ bool add(const char *wordBeingInserted = nullptr) {
     
     // Word successfully inserted
     shared->wordCountInFile[DICTSRCFILEINDEX]++;
+    shared->numOfCharsReadFromFile[DICTSRCFILEINDEX]++;
 
     return true;
 

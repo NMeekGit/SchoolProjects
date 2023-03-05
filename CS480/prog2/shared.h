@@ -9,6 +9,9 @@
 #include <map>
 #include <queue>
 #include <string>
+#include <cstring>
+#include <array>
+#include <bits/stdc++.h>
 
 #define NUMOFFILES 2
 #define DICTSRCFILEINDEX 0
@@ -22,13 +25,23 @@
 
 #define DEFAULT_MIN_NUM_OF_WORDS_WITH_A_PREFIX 1
 
+#define NULL_CHAR '\0'
+#define NULL_POS 29
+#define NCHILD 30
+
+using namespace std;
+
 typedef struct dictNode {
     struct dictNode* next[NCHILD]; // a-z,',-,_,NULL_CHAR
 };
 
 typedef struct SHARED_DATA {
 
-    const map<char, int> validCharacters;
+    /* character map for dictionary tree */
+    static const map<char, int> validCharacters;
+
+    /* Separator for parsing */
+    static const char *separators;
 
     /* Root Dictionary Node */
     dictNode *root;
@@ -85,7 +98,7 @@ typedef struct SHARED_DATA {
     long numOfProcessedPrefixes;
 
     /* buffer prefixes read from test file */
-    std::queue <std::string>prefixQueue;
+    queue<string> prefixQueue;
 
     /* pthread mutex for accessing the prefixQueue */
     pthread_mutex_t queue_mutex;
