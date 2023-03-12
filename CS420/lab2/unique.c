@@ -1,51 +1,53 @@
+/*
+ * UNIQUE.C
+ *
+ * @author: Noah Meeker
+ * @RED ID: 821272563
+ * @CLASS: CS 420
+ */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define BUFF 1000  // maximum length of input strings
-#define NULL_CHAR '\0'
-#define NULL_STR '\n'
-#define TRUE 1
-#define FALSE 0
+#define BUFF 1000      // maximum buffer size 
+#define NULL_CHAR '\0'  // NULL character
+#define NULL_STR '\n'   // Newline character
 
-int main(void) {
-    char* input = (char*)malloc(BUFF * sizeof(char));
-    char** tokens = (char**)malloc(BUFF * sizeof(input));
+int main() {
+    char input[BUFF];
+    char uniqueTokens[BUFF][BUFF];
     int numTokens;
     int idx;
 
-    // read input strings until EOF
+    /* read in input file */
     while (fgets(input, BUFF, stdin)) {
-        // remove line ending from input string
-        idx = 0;
-        while (input[idx] != NULL_CHAR && input[idx] != NULL_STR) {
-            idx++;
-        }
-        input[idx] = NULL_CHAR;
 
-        // split input string into tokens
+        /* Parse input */
         char *token = strtok(input, " ");
-        int n_tokens = 0;
-        while (token != NULL) {
-            // check if token is already in array
-            int found = FALSE;
-            for (idx = 0; idx < n_tokens; idx++) {
-                if (!strcmp(token, tokens[idx])) {
-                    found = TRUE;
+        while (token) {
+
+            /* add word to buffer if it doesn't exist */
+            int found = 1;
+            for (idx = 0; idx < numTokens; idx++) {
+                if (!strcmp(token, uniqueTokens[idx])) {
+                    found = 0; // found
                     break;
                 }
             }
-            // add token to array if not already present
-            if (!found) {
-              strcpy(tokens[numTokens], token);
+
+            if (found) {
+              strcpy(uniqueTokens[numTokens], token);
               numTokens++;
             }
-            // get next token
+            
+            /* Move to next token */
             token = strtok(NULL, " ");
         }
     }
 
-    // print unique tokens separated by spaces
+    /* print unique words */
     for (idx = 0; idx < numTokens; idx++) {
-        printf("%s ", tokens[idx]);
+        printf("%s ", uniqueTokens[idx]);
     }
     printf("\n");
 
