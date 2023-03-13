@@ -12,12 +12,22 @@ PROGRAM LAB_3
     READ *, filename
 
     matrix1 = READ_MATRIX(filename)
+    PRINT *
+    WRITE(*, FMT=300) size(matrix1,1), size(matrix1,2)
+    DO idx = 1, size(matrix1, 1)
+        DO jdx = 1, size(matrix1, 2)
+            write(*, 100, ADVANCE="NO") matrix_final(idx, jdx) 
+        END DO
+        write(*,*)
+    END DO
 
     ! Grab second file name from user
     PRINT *, "Enter Filename for second matrix"
     READ *, filename
 
     matrix2 = READ_MATRIX(filename)
+    PRINT *
+    WRITE(*, FMT=300) size(matrix2,1), size(matrix2,2)
 
     ! Check matrix sizes are correct
     IF (size(matrix1,2) /= size(matrix2,1)) THEN
@@ -42,11 +52,13 @@ PROGRAM LAB_3
         DO jdx = 1, size(matrix_final, 2)
             write(10, 100, ADVANCE="NO") matrix_final(idx, jdx) 
         END DO
+        write(10,*)
     END DO
 
     PRINT *, "Multiplication Completed"
 
 100 FORMAT (f20.2)
+300 FORMAT ("Matrix: ", i1, "x", i1)
 
     CONTAINS
 
@@ -67,21 +79,21 @@ PROGRAM LAB_3
             ENDIF
 
             ! Grab matrix size
+            ! 
+            ! matrix_size(1) = row
+            ! matrix_size(2) = col
             READ (9, *) matrix_size
 
             ! Print matrix size
-            PRINT *
-            WRITE(*, FMT=300) matrix_size(1), matrix_size(2)
 
             DO row = 1, matrix_size(1)
-                DO col = 1, matrix_size(2)
-                    READ(9, *) matrix(row, col)
-                END DO
+                READ(9, *) matrix(row, :)
             END DO
 
             CLOSE(9)
 
-            300 FORMAT ("Matrix: ", i1, "x", i1)
+            matrix = matrix(1:matrix_size(1),1:matrix_size(2))
+
             
         END FUNCTION READ_MATRIX
 
@@ -103,6 +115,7 @@ PROGRAM LAB_3
                     END DO
                 END DO
             END DO
+            matrix_final = matrix_final(1:m,1:p)
 
         END FUNCTION MULT_MATRIX
 END PROGRAM LAB_3
