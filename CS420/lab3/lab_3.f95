@@ -4,22 +4,19 @@ PROGRAM LAB_3
     IMPLICIT NONE
 
     CHARACTER(20) :: filename
-    REAL :: matrix1(100,100), matrix2(100,100), matrix_final(100,100)
-    INTEGER :: idx, jdx, ios
+    REAL, ALLOCATABLE :: matrix1(:,:), matrix2(:,:), matrix_final(:,:)
+    INTEGER, DIMENSION(2) :: size_arr
+    INTEGER :: idx, jdx, ios, count
 
     ! Grab first file name from user
     PRINT *, "Enter Filename for first matrix"
     READ *, filename
 
     matrix1 = READ_MATRIX(filename)
+
+    ! grab matrix size
     PRINT *
     WRITE(*, FMT=300) size(matrix1,1), size(matrix1,2)
-    DO idx = 1, size(matrix1, 1)
-        DO jdx = 1, size(matrix1, 2)
-            write(*, 100, ADVANCE="NO") matrix_final(idx, jdx) 
-        END DO
-        write(*,*)
-    END DO
 
     ! Grab second file name from user
     PRINT *, "Enter Filename for second matrix"
@@ -67,7 +64,7 @@ PROGRAM LAB_3
             CHARACTER(*), intent(in) :: filename
             INTEGER :: ios, row, col
             INTEGER, DIMENSION(2) :: matrix_size
-            REAL :: matrix(100,100)
+            REAL, ALLOCATABLE :: matrix(:,:)
 
             ! Open file
             OPEN(UNIT=9, FILE=filename, ACTION="READ", STATUS="OLD", IOSTAT=ios)
@@ -84,29 +81,30 @@ PROGRAM LAB_3
             ! matrix_size(2) = col
             READ (9, *) matrix_size
 
+            ALLOCATE(matrix(matrix_size(1),matrix_size(2)))
+
             ! Print matrix size
 
             DO row = 1, matrix_size(1)
-                READ(9, *) matrix(row, :)
+                READ(9, *) (matrix(row, col), col = 1, matrix_size(2))
             END DO
 
             CLOSE(9)
-
-            matrix = matrix(1:matrix_size(1),1:matrix_size(2))
-
             
         END FUNCTION READ_MATRIX
 
         FUNCTION MULT_MATRIX(matrix_a, matrix_b) RESULT(matrix_final)
             IMPLICIT NONE
-            REAL, INTENT(IN) :: matrix_a(100,100), matrix_b(100,100)
-            REAL :: matrix_final(100,100)
-            INTEGER idx, jdx, kdx
-            INTEGER m, n, p
+            REAL, INTENT(IN) :: matrix_a(:,:), matrix_b(:,:)
+            REAL, ALLOCATABLE :: matrix_final(:,:)
+            INTEGER :: idx, jdx, kdx
+            INTEGER :: m, n, p
 
             m = size(matrix1, 1)
             n = size(matrix1, 2)
             p = size(matrix2, 2)
+
+            ALLOCATE(matrix_final(m,p))
     
             DO idx = 1, m
                 DO jdx = 1, p
@@ -115,7 +113,6 @@ PROGRAM LAB_3
                     END DO
                 END DO
             END DO
-            matrix_final = matrix_final(1:m,1:p)
 
         END FUNCTION MULT_MATRIX
 END PROGRAM LAB_3
