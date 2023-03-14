@@ -1,3 +1,7 @@
+! PROGRAM LAB_3.F95
+!
+! Noah Meeker
+! Assignment 3
 
 PROGRAM LAB_3
 
@@ -83,8 +87,7 @@ PROGRAM LAB_3
 
             ALLOCATE(matrix(matrix_size(1),matrix_size(2)))
 
-            ! Print matrix size
-
+            ! Read in matrix from file
             DO row = 1, matrix_size(1)
                 READ(9, *) (matrix(row, col), col = 1, matrix_size(2))
             END DO
@@ -93,6 +96,7 @@ PROGRAM LAB_3
             
         END FUNCTION READ_MATRIX
 
+        ! Function to mulitply two matrices
         FUNCTION MULT_MATRIX(matrix_a, matrix_b) RESULT(matrix_final)
             IMPLICIT NONE
             REAL, INTENT(IN) :: matrix_a(:,:), matrix_b(:,:)
@@ -100,12 +104,17 @@ PROGRAM LAB_3
             INTEGER :: idx, jdx, kdx
             INTEGER :: m, n, p
 
+            ! m = matrix1 row size
+            ! n = matrix1 col size
+            ! p = matrix2 row size
             m = size(matrix1, 1)
             n = size(matrix1, 2)
             p = size(matrix2, 2)
 
+            ! Allocate final matrix size
             ALLOCATE(matrix_final(m,p))
     
+            ! Multiply
             DO idx = 1, m
                 DO jdx = 1, p
                     DO kdx = 1, n
