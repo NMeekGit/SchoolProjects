@@ -15,7 +15,7 @@
 
 using namespace std;
 
-void progressBar(int, SHARED_DATA *);
+void progressBar(int, SHARED_DATA *, pthread_t);
 
 int main (int argc, char** argv) {
     bool verbose = false;
@@ -143,20 +143,23 @@ int main (int argc, char** argv) {
     }
 
     /* Print progress bar for PopulateTree Thread */
-    progressBar(DICTSRCFILEINDEX, sharedData);
+    progressBar(DICTSRCFILEINDEX, sharedData, NULL);
 
-
-    /* wait for ReadPrefix Thread to finish */
-    pthread_join(readPrefixThread, NULL);
 
     /* Print progress bar for CountPrefix Thread */
-    progressBar(TESTFILEINDEX, sharedData);
+    progressBar(TESTFILEINDEX, sharedData, readPrefixThread);
 
     return 0;
 
 }
 
-void progressBar(int fileIdx, SHARED_DATA *shared) {
+void progressBar(int fileIdx, SHARED_DATA *shared, pthread_t thread) {
+
+    /* wait for ReadPrefix Thread to finish */
+    if (fileIdx == TESTFILEINDEX) {
+        pthread_join(thread, NULL);
+    };
+
     /* populatetree thread progress bar */
     double percent = 0.0;
     int pos;
