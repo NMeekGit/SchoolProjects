@@ -13,7 +13,7 @@ class SalariedEmployee : public Employee
  public:
    SalariedEmployee (long id = 0, string last = "", 
                     string first = "", char initial = ' ',
-                    int dept = 0, double salary = 0);
+                    char dept = ' ', double salary = 0, double percentage = 0);
   /*-----------------------------------------------------------------------
     Salaried Employee constructor.
     Preconditions:  None.
@@ -34,14 +34,16 @@ class SalariedEmployee : public Employee
 
  private:
   double mySalary;
+  double myPercentage;
 };
 
 //--- Definition of SalariedEmployee's Constructor
 inline SalariedEmployee::SalariedEmployee
                    (long id, string last, string first, char initial,
-                    int dept, double sal)
+                    char dept, double sal, double per)
 : Employee(id, last, first, initial, dept), 
-  mySalary(sal)
+  mySalary(sal),
+  myPercentage(per)
 { }
 
 //--- Definition of SalariedEmployee's display()
@@ -49,5 +51,6 @@ inline void SalariedEmployee::display(ostream & out) const
 {
   Employee::display(out);            //inherited members
   out << "$" << mySalary << endl;    //local members
+  out << myPercentage << "%" << endl;
 }
 #endif

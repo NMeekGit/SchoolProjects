@@ -12,7 +12,7 @@ class HourlyEmployee : public Employee
 {
  public:
    HourlyEmployee (long id = 0, string last = "", string first = "", 
-		   char initial = ' ', int dept = 0, double weeklyWage = 0,
+		   char initial = ' ', char dept = ' ', double weeklyWage = 0,
 		   double hoursWorked = 0, double overTimeFactor = 1.5);
    /*----------------------------------------------------------------------
     Hourly Employee constructor.
@@ -43,7 +43,7 @@ class HourlyEmployee : public Employee
 //--- Definition of HourlyEmployee's Constructor
 inline HourlyEmployee::HourlyEmployee 
                  (long id, string last, string first, char initial,
-                  int dept, double weeklyWage, double hoursWorked, 
+                  char dept, double weeklyWage, double hoursWorked, 
                   double overTimeFactor)
 : Employee(id, last, first, initial, dept),
   myWeeklyWage(weeklyWage), myHoursWorked(hoursWorked),

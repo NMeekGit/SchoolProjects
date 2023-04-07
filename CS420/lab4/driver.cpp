@@ -27,16 +27,18 @@ using namespace std;
 #define NEW     'n'
 #define REPORT  'r'
 #define SALES   's'
+#define CHEF    'c'
+#define WAITER  'w'
 
 int main() {
 
     Employee* employee;
     list<Employee*> employee_list;
     char command;
-    string type;
-    bool salaried = false;
+    char type;
+    bool chef = false;
     bool manager = false;
-    bool hourly = false;
+    bool waiter = false;
 
     cout << "What would you like to do? (n: new member, s: today's sales, r: report)";
     cin >> command;
@@ -53,6 +55,8 @@ int main() {
             int dept;
             int numEmployees;
             double salary;
+            double percent;
+            double tips;
             double weeklyWage;
             double hrsWorked;
             double overTime;
@@ -73,23 +77,27 @@ int main() {
             cin >> id;
             cout << "" << endl;
 
-            cout << "Department: ";
-            cin >> dept;
-            cout << "" << endl;
-
-            cout << "\nType of Employee: ";
+            cout << "\nType of Employee: (m: Manager, c: Chef, w: Waiter)";
             cin >> type;
             cout << "" << endl;
 
-            if (type == "salary") {
-                salaried = true;
+            if (type == CHEF) {
+                chef = true;
 
-                cout << "Employee's Salary: ";
+                cout << "Chef's Salary: ";
                 cin >> salary;
                 cout << "" << endl;
 
-            } else if (type == "hourly") {
-                hourly = true;
+                cout << "Chef's Percentage: ";
+                cin >> percent;
+                cout << "" << endl;
+
+                cout << "Chef's Expertise: ";
+                cin >> exp;
+                cout << "" << endl;
+
+            } else if (type == WAITER) {
+                waiter = true;
 
                 cout << "Weekly Wage: ";
                 cin >> weeklyWage;
@@ -103,11 +111,19 @@ int main() {
                 cin >> overTime;
                 cout << "" << endl;
 
-            } else if (type == "manager") {
+                cout << "Tips Made: ";
+                cin >> tips;
+                cout << "" << endl;
+
+            } else if (type == MANAGER) {
                 manager = true;
 
                 cout << "Manager's Salary: ";
                 cin >> salary;
+                cout << "" << endl;
+
+                cout << "Manager's Percentage: ";
+                cin >> percent;
                 cout << "" << endl;
 
                 cout << "Number of Employees: ";
@@ -115,13 +131,16 @@ int main() {
                 cout << "" << endl;
             }
 
-            if (salaried) {
-                employee = new SalariedEmployee(id, last, first, middle, dept, salary);
+            if (chef) {
+                chef = false;
+                employee = new Chef(id, last, first, middle, dept, exp, salary, percentage,);
                 employee_list.push_back(employee);
             } else if (hourly) {
-                employee = new HourlyEmployee(id, last, first, middle, dept, weeklyWage, hrsWorked, overTime);
+                hourly = false;
+                employee = new Waiter(id, last, first, middle, dept, weeklyWage, hrsWorked, overTime);
                 employee_list.push_back(employee);
             } else if (manager) {
+                manager = false;
                 employee = new Manager(id, last, first, middle, dept, salary, numEmployees);
                 employee_list.push_back(employee);
             } else {
@@ -138,7 +157,7 @@ int main() {
 
         }
 
-        if (command == PRINT) {
+        if (command == REPORT) {
 
             for (list<Employee*>::iterator idx = employee_list.begin(); idx != employee_list.end(); idx++) {
                 employee = *idx;

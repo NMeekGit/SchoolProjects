@@ -12,7 +12,7 @@ class Manager : public SalariedEmployee
 {
 public:
   Manager(long id = 0, string last = "", string first = "",
-    char initial = ' ', int dept = 0, double sal = 0, int numEmps = 0);
+    char initial = ' ', char dept = ' ', double sal = 0, double per = 0, int numEmps = 0);
    /*----------------------------------------------------------------------
     Manager constructor.
     Preconditions:  None.
@@ -38,8 +38,8 @@ private:
 
 //--- Definition of Manager's Constructor
 inline Manager::Manager(long id, string last, string first, char initial, 
-                        int dept, double sal, int numEmps)
-: SalariedEmployee(id, last, first, initial, dept, sal), 
+                        char dept, double sal, double per, int numEmps)
+: SalariedEmployee(id, last, first, initial, dept, sal, per), 
   myNumEmps(numEmps) 
 {}
 

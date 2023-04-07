@@ -15,7 +15,7 @@ class Employee
 {
  public:
    Employee(long id = 0, string last = "", string first = "", 
-	        char initial = ' ', int dept = 0);
+	        char initial = ' ', char dept = ' ');
   /*-----------------------------------------------------------------------
     Employee constructor.
     Preconditions:  None.
@@ -40,16 +40,16 @@ class Employee
   string myLastName,        //     "      last name
          myFirstName;       //     "      first name
   char myMiddleInitial;     //     "      middle initial
-  int myDeptCode;           //     "      department code
-  // ... other attributes common to all employees
+  char myEmpClass;           //     "      employee class
+                            // ... other attributes common to all employees
 };
 
 
 //--- Definition of Employee's Constructor
 inline Employee::Employee(long id, string last, string first, 
-                          char initial, int dept)
+                          char initial, char dept)
   : myIdNum(id), myLastName(last), myFirstName(first),
-     myMiddleInitial(initial), myDeptCode(dept)
+     myMiddleInitial(initial), myEmpClass(dept)
 { }
 
 //--- Definition of Employee's display()
@@ -57,7 +57,7 @@ inline void Employee::display(ostream & out) const
 {
   out << myIdNum << ' ' << myLastName << ", "       
       << myFirstName << ' ' << myMiddleInitial << "  " 
-      << myDeptCode << endl;
+      << myEmpClass << endl;
 }
 
 //--- Definition of output operator <<
