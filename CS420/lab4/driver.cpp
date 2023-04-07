@@ -25,7 +25,8 @@ using namespace std;
 
 #define QUIT    'q'
 #define NEW     'n'
-#define PRINT   'p'
+#define REPORT  'r'
+#define SALES   's'
 
 int main() {
 
@@ -37,7 +38,7 @@ int main() {
     bool manager = false;
     bool hourly = false;
 
-    cout << "What would you like to do? : ";
+    cout << "What would you like to do? (n: new member, s: today's sales, r: report)";
     cin >> command;
     cout << "" << endl;
 
@@ -131,6 +132,11 @@ int main() {
         }
 
         fflush(stdin);
+
+        if (command == SALES) {
+
+
+        }
 
         if (command == PRINT) {
 
