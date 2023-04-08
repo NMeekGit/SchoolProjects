@@ -17,8 +17,8 @@
 #include <string>
 
 #include "Employee.h"
-#include "SalariedEmployee.h"
-#include "HourlyEmployee.h"
+#include "Chef.h"
+#include "Waiter.h"
 #include "Manager.h"
 
 using namespace std;

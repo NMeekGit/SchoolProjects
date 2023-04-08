@@ -8,12 +8,12 @@
 #ifndef SALARIED_EMPLOYEE
 #define SALARIED_EMPLOYEE
 
-class SalariedEmployee : public Employee
+class Chef : public Manager
 {
  public:
-   SalariedEmployee (long id = 0, string last = "", 
+   Chef (long id = 0, string last = "", 
                     string first = "", char initial = ' ',
-                    char dept = ' ', double salary = 0, double percentage = 0);
+                    char dept = ' ', double salary = 0, double percentage = 0, string exp = "");
   /*-----------------------------------------------------------------------
     Salaried Employee constructor.
     Preconditions:  None.
@@ -33,24 +33,21 @@ class SalariedEmployee : public Employee
   // ... Other salaried employee operations ...
 
  private:
-  double mySalary;
-  double myPercentage;
+   myExpertise;
 };
 
 //--- Definition of SalariedEmployee's Constructor
-inline SalariedEmployee::SalariedEmployee
+inline Chef::Chef
                    (long id, string last, string first, char initial,
                     char dept, double sal, double per)
-: Employee(id, last, first, initial, dept), 
-  mySalary(sal),
-  myPercentage(per)
+: Manager(id, last, first, initial, dept, sal, per), 
+    myExpertise(exp)
 { }
 
 //--- Definition of SalariedEmployee's display()
-inline void SalariedEmployee::display(ostream & out) const
+inline void Chef::display(ostream & out) const
 {
-  Employee::display(out);            //inherited members
-  out << "$" << mySalary << endl;    //local members
-  out << myPercentage << "%" << endl;
+  Manager::display(out);            //inherited members
+  out << "Expertise: \t" << myExpertise << endl;
 }
 #endif

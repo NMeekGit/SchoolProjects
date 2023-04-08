@@ -12,7 +12,7 @@ class Manager : public SalariedEmployee
 {
 public:
   Manager(long id = 0, string last = "", string first = "",
-    char initial = ' ', char dept = ' ', double sal = 0, double per = 0, int numEmps = 0);
+    char initial = ' ', char dept = ' ', double sal = 0, double per = 0);
    /*----------------------------------------------------------------------
     Manager constructor.
     Preconditions:  None.
