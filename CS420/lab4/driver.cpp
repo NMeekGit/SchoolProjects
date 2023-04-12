@@ -39,13 +39,13 @@ int main() {
     list<Sales*> monthlySales;
     char command;
     char type;
-    int numMonths = 1;
+    int numMonths = 0;
     double totalSales = 0;
     bool chef = false;
     bool manager = false;
     bool waiter = false;
 
-    cout << "\nWhat would you like to do? (n: new member, s: today's sales, r: report)";
+    cout << "\nWhat would you like to do? (n: new member, s: today's sales, r: report) ";
     cin >> command;
     cout << "" << endl;
 
@@ -83,7 +83,7 @@ int main() {
             cin >> salary;
             cout << "" << endl;
 
-            cout << "\nType of Employee: (o: Owner, c: Chef, w: Waiter)";
+            cout << "\nType of Employee: (o: Owner, c: Chef, w: Waiter) ";
             cin >> type;
             cout << "" << endl;
 
@@ -135,8 +135,11 @@ int main() {
                 employee = new Manager(id, last, first, middle, dept, salary, percent);
                 employee_list.push_back(employee);
             } else {
-                employee = new Employee(id, last, first, middle, dept);
-                employee_list.push_back(employee);
+
+                cout << "[ERROR]: Incorrect Type Entered" << endl;
+                command = 'q';
+                continue;
+
             }
 
             cout << "***Employee Entered***" << endl;
@@ -164,7 +167,7 @@ int main() {
                 employee = *idx;
 
                 if (employee->GetClass() == 'W') {
-                    cout << "Tips for " << employee->GetName() << " ";
+                    cout << "Tips for " << employee->GetName() << " : ";
                     cin >> tips;
                     cout << "" << endl;
 
@@ -182,7 +185,21 @@ int main() {
                     sales = *idx;
                     cout << *sales << endl;
                 }
-                cout << "\nTotal Sales: " << totalSales << endl;
+
+                cout << setw(20) << "Total Sales: " << totalSales << endl;
+
+                for (list<Employee*>::iterator idx = employee_list.begin(); idx != employee_list.end(); idx++) {
+                    employee = *idx;
+
+                    if (employee->GetClass() != 'W') {
+
+                        cout << employee->GetName() << left << setw(20) << " revenue split: " << "$" << totalSales * employee->GetPercentage() << endl;
+
+                    } else {
+
+                        cout << employee->GetName() << left << setw(20) << " tips: " << "$" << employee->GetTips() << endl;
+                    }
+                }
             }
         }
 

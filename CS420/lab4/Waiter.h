@@ -24,6 +24,7 @@ class Waiter : public Employee
        myOverTimeFactor to overTimeFactor (default 1.5).
    -----------------------------------------------------------------------*/ 
 
+  double GetTips();
   void SetTips(double tips = 0);
 
   virtual void display(ostream & out) const;
@@ -48,6 +49,12 @@ inline Waiter::Waiter
 : Employee(id, last, first, initial, dept, sal),
     myYears(year)
 { }
+
+inline double Waiter::GetTips() {
+
+    return this->myTips;
+
+};
 
 inline void Waiter::SetTips(double tips) 
 {

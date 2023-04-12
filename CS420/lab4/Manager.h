@@ -22,6 +22,7 @@ public:
        numEmps (default 0).
    -----------------------------------------------------------------------*/ 
 
+  virtual double GetPercentage();
   virtual void display(ostream & out) const;
   /*-----------------------------------------------------------------------
     Output function member.
@@ -43,6 +44,11 @@ inline Manager::Manager(long id, string last, string first, char initial,
     myPercent(per)
 {}
 
+inline double Manager::GetPercentage() {
+
+    return this->myPercent;
+
+}
 //--- Definition of Manager's display()
 inline void Manager::display(ostream & out) const 
 { 

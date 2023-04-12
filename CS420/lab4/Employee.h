@@ -30,6 +30,10 @@ class Employee
 
   char GetClass();
 
+  virtual double GetTips();
+  
+  virtual double GetPercentage();
+
   virtual void SetTips(double);
 
   virtual void display(ostream & out) const;
@@ -72,7 +76,13 @@ inline char Employee::GetClass() {
 
 }
 
+inline double Employee::GetTips()
+{ }
+
 inline void Employee::SetTips(double tips)
+{ }
+
+inline double Employee::GetPercentage()
 { }
 
 //--- Definition of Employee's display()
