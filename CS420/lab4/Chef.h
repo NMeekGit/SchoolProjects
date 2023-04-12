@@ -1,12 +1,13 @@
-/* SalariedEmployee.h ----------------------------------------------------
-   Header file for a class SalariedEmployee derived from Employee that
+/* Chef.h ----------------------------------------------------
+   Header file for a class Chef derived from Employee that
    adds the attributes unique to salaried employees. 
    Operations are:  A constructor and an output operation.
    ----------------------------------------------------------------------*/
 #include "Employee.h"
+#include "Manager.h"
 
-#ifndef SALARIED_EMPLOYEE
-#define SALARIED_EMPLOYEE
+#ifndef CHEF
+#define CHEF
 
 class Chef : public Manager
 {
@@ -33,13 +34,13 @@ class Chef : public Manager
   // ... Other salaried employee operations ...
 
  private:
-   myExpertise;
+   string myExpertise;
 };
 
 //--- Definition of SalariedEmployee's Constructor
 inline Chef::Chef
                    (long id, string last, string first, char initial,
-                    char dept, double sal, double per)
+                    char dept, double sal, double per, string exp)
 : Manager(id, last, first, initial, dept, sal, per), 
     myExpertise(exp)
 { }
@@ -48,6 +49,6 @@ inline Chef::Chef
 inline void Chef::display(ostream & out) const
 {
   Manager::display(out);            //inherited members
-  out << "Expertise: \t" << myExpertise << endl;
+  out << left << setw(20) << "Expertise: " << myExpertise << endl;
 }
 #endif

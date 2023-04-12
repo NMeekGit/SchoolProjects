@@ -5,6 +5,7 @@
    -----------------------------------------------------------------------*/
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 #ifndef EMPLOYEE
 #define EMPLOYEE
@@ -24,6 +25,12 @@ class Employee
         empty string), myMiddleInitial to initial (default blank char),
         and myDeptCode to dept (default 0). 
     ----------------------------------------------------------------------*/ 
+
+  string GetName();
+
+  char GetClass();
+
+  virtual void SetTips(double);
 
   virtual void display(ostream & out) const;
   /*-----------------------------------------------------------------------
@@ -48,18 +55,33 @@ class Employee
 
 //--- Definition of Employee's Constructor
 inline Employee::Employee(long id, string last, string first, 
-                          char initial, char dept)
+                          char initial, char dept, double sal)
   : myIdNum(id), myLastName(last), myFirstName(first),
-     myMiddleInitial(initial), myEmpClass(dept), mySalary(salary)
+     myMiddleInitial(initial), myEmpClass(dept), mySalary(sal)
+{ }
+
+inline string Employee::GetName() {
+
+    return this->myFirstName;
+
+}
+
+inline char Employee::GetClass() {
+
+    return this->myEmpClass;
+
+}
+
+inline void Employee::SetTips(double tips)
 { }
 
 //--- Definition of Employee's display()
 inline void Employee::display(ostream & out) const
 {
-  out << "ID: \t" << myIdNum << endl;
-  out << "Name: \t" << myLastName << ", " << myFirstName << ' ' << myMiddleInitial << endl; 
-  out << "Class: \t" << myEmpClass << endl;
-  out << "Salary: \t$" << mySalary << endl;
+  out << left << setw(20) << "ID: " << myIdNum << endl;
+  out << left << setw(20) << "Name: " << myLastName << ", " << myFirstName << ' ' << myMiddleInitial << endl; 
+  out << left << setw(20) << "Class: " << myEmpClass << endl;
+  out << left << setw(20) << "Salary: " << "$" << mySalary << endl;
 }
 
 //--- Definition of output operator <<

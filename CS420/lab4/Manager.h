@@ -1,14 +1,14 @@
 /* Manager.h --------------------------------------------------------------
-   Header file for a class Manager derived from SalariedEmployee that adds
+   Header file for a class Manager derived from Employee that adds
    the attributes unique to managers. 
    Operations are:  A constructor and a virtual output operation.
    -----------------------------------------------------------------------*/
-#include "SalariedEmployee.h"
+#include "Employee.h"
 
 #ifndef MANAGER
 #define MANAGER
 
-class Manager : public SalariedEmployee
+class Manager : public Employee
 {
 public:
   Manager(long id = 0, string last = "", string first = "",
@@ -33,20 +33,20 @@ public:
  // ... Other Manager operations ...
 
 private:
-  int myNumEmps;
+  double myPercent;
 };
 
 //--- Definition of Manager's Constructor
 inline Manager::Manager(long id, string last, string first, char initial, 
-                        char dept, double sal, double per, int numEmps)
-: SalariedEmployee(id, last, first, initial, dept, sal, per), 
-  myNumEmps(numEmps) 
+                        char dept, double sal, double per)
+: Employee(id, last, first, initial, dept, sal),
+    myPercent(per)
 {}
 
 //--- Definition of Manager's display()
 inline void Manager::display(ostream & out) const 
 { 
-  SalariedEmployee::display(out);
-  out << myNumEmps << endl;
+  Employee::display(out);
+  out << left << setw(20) << "Percentage: " << myPercent * 100 << "%" << endl;
 }
 #endif

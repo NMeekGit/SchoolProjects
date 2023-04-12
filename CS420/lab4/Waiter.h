@@ -5,15 +5,15 @@
    -----------------------------------------------------------------------*/
 #include "Employee.h"
 
-#ifndef HOURLY_EMPLOYEE
-#define HOURLY_EMPLOYEE
+#ifndef WAITER
+#define WAITER
 
-class HourlyEmployee : public Employee
+class Waiter : public Employee
 {
  public:
-   HourlyEmployee (long id = 0, string last = "", string first = "", 
-		   char initial = ' ', char dept = ' ', double weeklyWage = 0,
-		   double hoursWorked = 0, double overTimeFactor = 1.5);
+    Waiter (long id = 0, string last = "", string first = "", 
+		   char initial = ' ', char dept = ' ', double sal = 0,
+		    int years = 0);
    /*----------------------------------------------------------------------
     Hourly Employee constructor.
     Preconditions:  None.
@@ -23,6 +23,8 @@ class HourlyEmployee : public Employee
        0), myHoursWorked to hoursWorked (default 0), and 
        myOverTimeFactor to overTimeFactor (default 1.5).
    -----------------------------------------------------------------------*/ 
+
+  void SetTips(double tips = 0);
 
   virtual void display(ostream & out) const;
   /*-----------------------------------------------------------------------
@@ -35,27 +37,28 @@ class HourlyEmployee : public Employee
   // ... Other hourly employee operations ...
 
  private:
-  double myWeeklyWage,
-         myHoursWorked,
-         myOverTimeFactor;
+  double myTips;
+  int myYears;
 };
 
 //--- Definition of HourlyEmployee's Constructor
-inline HourlyEmployee::HourlyEmployee 
+inline Waiter::Waiter 
                  (long id, string last, string first, char initial,
-                  char dept, double weeklyWage, double hoursWorked, 
-                  double overTimeFactor)
-: Employee(id, last, first, initial, dept),
-  myWeeklyWage(weeklyWage), myHoursWorked(hoursWorked),
-  myOverTimeFactor(overTimeFactor)
+                  char dept, double sal, int year)
+: Employee(id, last, first, initial, dept, sal),
+    myYears(year)
 { }
 
+inline void Waiter::SetTips(double tips) 
+{
+    this->myTips = tips;
+}
+
 //--- Definition of HourlyEmployee's display()
-inline void HourlyEmployee::display(ostream & out) const
+inline void Waiter::display(ostream & out) const
 {
   Employee::display(out);              //inherited members
-  out << "$" << myWeeklyWage << endl   //local members
-      << myHoursWorked << endl 
-      << myOverTimeFactor << endl;
+  out << left << setw(20) << "Tips Made: " <<"$" << myTips << endl;
+  out << left << setw(20) << "Years With Company: " << myYears << endl;
 }
 #endif
