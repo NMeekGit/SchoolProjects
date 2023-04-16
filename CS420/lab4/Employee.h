@@ -10,6 +10,8 @@
 #ifndef EMPLOYEE
 #define EMPLOYEE
 
+#define WIDTH 20
+
 using namespace std;
 
 class Employee
@@ -88,10 +90,10 @@ inline double Employee::GetPercentage()
 //--- Definition of Employee's display()
 inline void Employee::display(ostream & out) const
 {
-  out << left << setw(20) << "ID: " << myIdNum << endl;
-  out << left << setw(20) << "Name: " << myLastName << ", " << myFirstName << ' ' << myMiddleInitial << endl; 
-  out << left << setw(20) << "Class: " << myEmpClass << endl;
-  out << left << setw(20) << "Salary: " << "$" << mySalary << endl;
+  out << left << setw(WIDTH) << "ID: " << myIdNum << endl;
+  out << left << setw(WIDTH) << "Name: " << myLastName << ", " << myFirstName << ' ' << myMiddleInitial << endl; 
+  out << left << setw(WIDTH) << "Class: " << myEmpClass << endl;
+  out << left << setw(WIDTH) << "Salary: " << "$" << mySalary << endl;
 }
 
 //--- Definition of output operator <<

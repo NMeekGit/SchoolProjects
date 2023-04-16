@@ -16,6 +16,7 @@ class Sales
     public:
         Sales(int month = 0, double sale = 0);
 
+        double GetSales();
         virtual void display(ostream & out) const;
 
     private:
@@ -28,9 +29,13 @@ inline Sales::Sales(int month, double sale)
 : myMonth(month), mySale(sale)
 { }
 
+inline double Sales::GetSales() {
+    return mySale;
+};
+
 inline void Sales::display(ostream & out) const
 {
-    out << "Month " << myMonth << ":" << setw(8) << mySale << endl;
+    out << "Month " << myMonth << ":" << setw(8) << "$" << mySale << endl;
 };
 
 inline ostream & operator<<(ostream & out, const Sales & emp)

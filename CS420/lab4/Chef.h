@@ -49,6 +49,6 @@ inline Chef::Chef
 inline void Chef::display(ostream & out) const
 {
   Manager::display(out);            //inherited members
-  out << left << setw(20) << "Expertise: " << myExpertise << endl;
+  out << left << setw(WIDTH) << "Expertise: " << myExpertise << endl;
 }
 #endif

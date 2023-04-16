@@ -53,6 +53,6 @@ inline double Manager::GetPercentage() {
 inline void Manager::display(ostream & out) const 
 { 
   Employee::display(out);
-  out << left << setw(20) << "Percentage: " << myPercent * 100 << "%" << endl;
+  out << left << setw(WIDTH) << "Percentage: " << myPercent * 100 << "%" << endl;
 }
 #endif

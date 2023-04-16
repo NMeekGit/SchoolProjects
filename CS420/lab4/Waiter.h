@@ -38,7 +38,7 @@ class Waiter : public Employee
   // ... Other hourly employee operations ...
 
  private:
-  double myTips;
+  double myTips = 0;
   int myYears;
 };
 
@@ -58,14 +58,14 @@ inline double Waiter::GetTips() {
 
 inline void Waiter::SetTips(double tips) 
 {
-    this->myTips = tips;
+    this->myTips += tips;
 }
 
 //--- Definition of HourlyEmployee's display()
 inline void Waiter::display(ostream & out) const
 {
   Employee::display(out);              //inherited members
-  out << left << setw(20) << "Tips Made: " <<"$" << myTips << endl;
-  out << left << setw(20) << "Years With Company: " << myYears << endl;
+  out << left << setw(WIDTH) << "Tips Made: " <<"$" << myTips << endl;
+  out << left << setw(WIDTH) << "Years With Company: " << myYears << endl;
 }
 #endif
