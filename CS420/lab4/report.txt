@@ -1,0 +1,36 @@
+------------------------------->
+Month 1:       $6000
+
+Total Sales :                   $6000
+Jay        total tips:                    $1000
+Hayden     total tips:                    $1500
+Cungak     total tips:                    $1700
+Mary       total revenue split:           $1200
+Henry      total revenue split:           $1200
+Gustavo    total revenue split:           $3600
+------------------------------->
+Month 1:       $6000
+
+Month 2:       $4000
+
+Total Sales :                   $10000
+Jay        total tips:                    $1000
+Hayden     total tips:                    $1500
+Cungak     total tips:                    $1700
+Mary       total revenue split:           $2000
+Henry      total revenue split:           $2000
+Gustavo    total revenue split:           $6000
+------------------------------->
+Month 1:       $6000
+
+Month 2:       $4000
+
+Month 3:       $-1000
+
+Total Sales :                   $9000
+Jay        total tips:                    $1000
+Hayden     total tips:                    $1500
+Cungak     total tips:                    $1700
+Mary       total revenue split:           $1800
+Henry      total revenue split:           $1800
+Gustavo    total revenue split:           $5400

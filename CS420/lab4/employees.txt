@@ -1,0 +1,41 @@
+ID:                 4001
+Name:               Jones, Jay J
+Class:              W
+Salary:             $3000
+Tips Made:          $0
+Years With Company: 3
+
+ID:                 4002
+Name:               Cooper, Hayden H
+Class:              W
+Salary:             $3000
+Tips Made:          $0
+Years With Company: 5
+
+ID:                 4003
+Name:               Stauffer, Cungak C
+Class:              W
+Salary:             $3000
+Tips Made:          $0
+Years With Company: 7
+
+ID:                 2001
+Name:               Smith, Mary M
+Class:              C
+Salary:             $10000
+Percentage:         20%
+Expertise:          Italian
+
+ID:                 2002
+Name:               Styles, Henry H
+Class:              C
+Salary:             $10000
+Percentage:         20%
+Expertise:          Mexican
+
+ID:                 1001
+Name:               Hernandez, Gustavo G
+Class:              O
+Salary:             $15000
+Percentage:         60%
+
