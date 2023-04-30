@@ -27,8 +27,8 @@ void inputReverseArray(int*);
 void inputRandomArray(int*);
 
 void quicksort(int*, int, int);
-/* void mergesort(int& array, int size); */
-/* void merge(int& array, int& left, int& right, int sizeRight, int sizeLeft); */
+void mergesort(int* array, int size);
+void merge(int* array, int* left, int* right, int sizeRight, int sizeLeft);
 
 void summary(clock_t, clock_t, string);
 
@@ -69,6 +69,38 @@ int main() {
 
     // print result
     name = "Quicksort : Random Array";
+    summary( begin, end, name );
+
+    // resituate arrays
+    inputSortedArray( sortedArray );
+    inputReverseArray( reverseArray );
+    inputRandomArray( randomArray );
+
+    // Mergesort : sortedArray
+    begin = clock();
+    mergesort(sortedArray, ARRAY_SIZE);
+    end = clock();
+
+    // print result
+    name = "Mergesort : Sorted Array";
+    summary( begin, end, name );
+
+    // Mergesort : reverseArray
+    begin = clock();
+    mergesort( reverseArray, ARRAY_SIZE );
+    end = clock();
+
+    // print result
+    name = "Mergesort : Reverse Array";
+    summary( begin, end, name );
+
+    // Mergesort : randomArray
+    begin = clock();
+    mergesort( randomArray, ARRAY_SIZE );
+    end = clock();
+
+    // print result
+    name = "Mergesort : Random Array";
     summary( begin, end, name );
 
     return 0;
@@ -132,13 +164,41 @@ void mergesort( int* array, int size ) {
     for ( idx = 0; idx < mid; idx++ ) {
         left[idx] = array[idx];
     }
-    for ( idx = mid; i < size; idx++ ) {
+    for ( idx = mid; idx < size; idx++ ) {
         right[idx - mid] = array[idx];
     }
 
     mergesort( left, mid );
     mergesort( right, size - mid );
     merge( array, left, right, mid, size - mid);
+};
+
+void merge( int* array, int* left, int* right, int lsize, int rsize) {
+
+    int idx = 0;
+    int jdx = 0;
+    int kdx = 0;
+
+    while ( idx < lsize && jdx < rsize ) {
+        if ( left[idx] <= right[jdx] ) {
+            array[kdx] = left[idx];
+            idx++;
+        } else {
+            array[kdx] = right[jdx];
+            jdx++;
+        }
+        kdx++;
+    }
+    while ( idx < lsize ) {
+        array[kdx] = left[idx];
+        idx++;
+        kdx++;
+    }
+    while ( jdx < rsize ) {
+        array[kdx] = right[jdx];
+        jdx++;
+        kdx++;
+    }
 };
 
 void summary( clock_t start, clock_t end, string arrayName ) {
