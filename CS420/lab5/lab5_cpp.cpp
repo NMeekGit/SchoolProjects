@@ -158,7 +158,7 @@ void mergesort( int* array, int size ) {
 
     int mid = size / 2;
     int left[mid];
-    int right[mid - size];
+    int right[size - mid];
     int idx;
 
     for ( idx = 0; idx < mid; idx++ ) {
