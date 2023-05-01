@@ -52,9 +52,34 @@ time func x = do
 
 main :: IO ()
 main = do
-    let array_size = 10000
+    let array_size = 1000000
 
     let sortedList = inputSortedArray array_size
+    putStrLn $ "Quicksort : Sorted List"
     (list, timetaken) <- time quicksort sortedList
     putStrLn $ "Time taken: " ++ show timetaken ++ " seconds"
 
+    let reverseList = inputReverseArray array_size
+    putStrLn $ "Quicksort : Reverse List"
+    (list, timetaken) <- time quicksort reverseList
+    putStrLn $ "Time taken: " ++ show timetaken ++ " seconds"
+
+    randomList <- inputRandomArray array_size
+    putStrLn $ "Quicksort : Random List"
+    (list, timetaken) <- time quicksort randomList
+    putStrLn $ "Time taken: " ++ show timetaken ++ " seconds"
+
+    -- let sortedList = inputSortedArray array_size
+    -- putStrLn $ "Mergesort : Sorted List"
+    -- (list, timetaken) <- time mergesort sortedList
+    -- putStrLn $ "Time taken: " ++ show timetaken ++ " seconds"
+
+    -- let reverseList = inputReverseArray array_size
+    -- putStrLn $ "Mergesort : Reverse List"
+    -- (list, timetaken) <- time mergesort reverseList
+    -- putStrLn $ "Time taken: " ++ show timetaken ++ " seconds"
+
+    -- randomList <- inputRandomArray array_size
+    -- putStrLn $ "Mergesort : Random List"
+    -- (list, timetaken) <- time mergesort randomList
+    -- putStrLn $ "Time taken: " ++ show timetaken ++ " seconds"
